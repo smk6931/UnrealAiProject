@@ -32,13 +32,6 @@ void APlayerCharacter::Tick(float DeltaTime)
 	{
 		UMenuUi* Ui = InventoryObject->MenuUi;
 		Ui->GetVisibility() == ESlateVisibility::Hidden ? Ui->SetVisibility(ESlateVisibility::Visible) : Ui->SetVisibility(ESlateVisibility::Hidden);
-		Ui->BpItemInfoUi->LoadItems();
-
-		//Api->ParseItemInfo();
-		/*FItemRow Row;
-		TArray<FItemRow> Items;
-		Items.Add(Row);
-		Ui->BpItemInfoUi->LoadItems(Items);*/
 	}
 
 	if (GetWorld()->GetFirstPlayerController()->WasInputKeyJustPressed(EKeys::LeftMouseButton))

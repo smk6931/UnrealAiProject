@@ -159,14 +159,14 @@ void UItemInfoUi::LoadItems()
             ButtonItemMap.Add(ClickButton, Item);
 
             // 클릭 이벤트 바인딩
-            ClickButton->OnClicked.AddDynamic(this, &UItemInfoUi::OnItemClicked);
+            ClickButton->OnClicked.AddDynamic(this, &UItemInfoUi::OnItemClick);
         }
     });
 
     Api->ItemInfoResponse();
 }
 
-void UItemInfoUi::OnItemClicked()
+void UItemInfoUi::OnItemClick()
 {
     // 클릭된 버튼 탐색
     for (auto& Pair : ButtonItemMap)

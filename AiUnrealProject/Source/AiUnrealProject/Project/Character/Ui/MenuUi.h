@@ -22,7 +22,13 @@ public:
 	class UMonsterInfoUi* BpMonsterInfoUi;
 
 	UPROPERTY(meta = (BindWidget))
+	class UGenerateUi* BpBpGenerateUi;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Close;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_Create;
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Monster;
@@ -34,13 +40,16 @@ public:
 	class UBorder* Board;
 
 	UFUNCTION()
-	void ButtonCloseClick();
+	void OnCloseClick();
 
 	UFUNCTION()
-	void ButtonMonsterClick();
+	void OnMonsterClick();
 
 	UFUNCTION()
-	void ButtonItemClick();
+	void OnCreateClick();
+
+	UFUNCTION()
+	void OnItemClick();
 
 	virtual void NativeConstruct() override;
 };

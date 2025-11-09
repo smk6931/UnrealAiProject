@@ -23,7 +23,7 @@ void UApiNpcObject::SendNpcChat(const FString& Question)
 	FString JsonString;
 	FJsonObjectConverter::UStructToJsonObjectString(Post, JsonString);
 	HttpRequest->SetContentAsString(JsonString);
-
+	
 	HttpRequest->OnProcessRequestComplete().BindLambda([this](
 		FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
 	{
@@ -32,6 +32,9 @@ void UApiNpcObject::SendNpcChat(const FString& Question)
 		{
 			FNpcChatResponse Parsed;
 			FJsonObjectConverter::JsonObjectStringToUStruct(Res->GetContentAsString(), &Parsed);
+			
+			UE_LOG(LogTemp, Display, TEXT("NpcChat Received response: %s"), *Res->GetContentAsString());
+			
 			Result = Parsed.response;
 			UE_LOG(LogTemp, Display, TEXT("SendNpcChat success %s"),*Result);
 		} else { Result = TEXT("요청 실패"); }

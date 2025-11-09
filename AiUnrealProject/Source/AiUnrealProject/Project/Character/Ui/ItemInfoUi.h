@@ -34,7 +34,7 @@ public:
 	void LoadItems();
 
 	UFUNCTION()
-	void OnItemClicked();
+	void OnItemClick();
 
 	UPROPERTY(EditAnywhere)
 	TMap<UButton*, FItemRow> ButtonItemMap;
