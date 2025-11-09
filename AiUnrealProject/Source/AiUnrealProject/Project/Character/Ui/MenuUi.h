@@ -19,6 +19,9 @@ public:
 	class UItemInfoUi* BpItemInfoUi;
 
 	UPROPERTY(meta = (BindWidget))
+	class UMonsterInfoUi* BpMonsterInfoUi;
+
+	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Close;
 	
 	UPROPERTY(meta = (BindWidget))

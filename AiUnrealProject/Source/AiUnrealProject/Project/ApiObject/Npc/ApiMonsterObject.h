@@ -2,6 +2,8 @@
 
 #pragma once
 
+DECLARE_DELEGATE_OneParam(FOnMonsterInfoResponse, FString String)
+
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "ApiMonsterObject.generated.h"
@@ -34,7 +36,7 @@ public:
 	FString description = "description";
 
 	UPROPERTY(BlueprintReadWrite)
-	TArray<FString>drop_items;
+	TArray<int>drop_item_ids;
 	
 	UPROPERTY(BlueprintReadWrite)
 	FString image_url = "image_url";
@@ -56,5 +58,15 @@ UCLASS()
 class AIUNREALPROJECT_API UApiMonsterObject : public UObject
 {
 	GENERATED_BODY()
+public:
+
+	UPROPERTY(EditAnywhere)
+	FMonsterRows Rows;
+
+	FOnMonsterInfoResponse OnMonsterInfoResponse;
+	
+	void MonsterInfoResponse();
+
+	void LoadImageFromUrl(const FString& url);
 };
 

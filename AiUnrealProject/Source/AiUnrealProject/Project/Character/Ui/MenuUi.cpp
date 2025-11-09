@@ -4,6 +4,7 @@
 #include "MenuUi.h"
 
 #include "ItemInfoUi.h"
+#include "MonsterInfoUi.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
 
@@ -14,18 +15,22 @@ void UMenuUi::NativeConstruct()
 	Button_Item->OnClicked.AddDynamic(this,&UMenuUi::ButtonItemClick);
 	Button_Monster->OnClicked.AddDynamic(this,&UMenuUi::ButtonMonsterClick);
 	BpItemInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMenuUi::ButtonCloseClick()
 {
 	UE_LOG(LogTemp, Display, TEXT("ButtonCloseClick"));
 	BpItemInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Hidden);
 	Board->SetVisibility(ESlateVisibility::Visible);
 }
 
 void UMenuUi::ButtonMonsterClick()
 {
 	UE_LOG(LogTemp, Display, TEXT("ButtonMonsterClick"));
+	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Visible);
+	Board->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMenuUi::ButtonItemClick()
