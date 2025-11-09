@@ -1,0 +1,29 @@
+import psycopg2
+from dotenv import load_dotenv
+import os
+
+load_dotenv(interpolate=True)
+
+def get_connection():
+    try:
+        conn = psycopg2.connect(
+            host="localhost",
+            port="5434",
+            database="gameworld",
+            user="postgres",
+            password="1234"
+        )
+        print("postgre 연결 성공")
+        return conn
+    except Exception as e:
+        print("postgre 연결 실패", e)
+        return None
+
+def get_cursor():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    if conn is None:
+        return None, None
+    
+    return conn, cur
