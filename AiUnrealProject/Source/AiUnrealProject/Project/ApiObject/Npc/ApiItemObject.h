@@ -18,6 +18,9 @@ struct FItemRow
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	int id = 1;
+	
 	UPROPERTY(BlueprintReadWrite)
 	FString Name = "name";
 
@@ -46,6 +49,19 @@ public:
 	TArray<FItemRow> response;
 };
 
+USTRUCT(BlueprintType)
+struct FMonsterGenerateItemRequest
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite)
+	int id = 1;
+	UPROPERTY(BlueprintReadWrite)
+	int item_count = 1;
+	UPROPERTY(BlueprintReadWrite)
+	bool bimage = false;
+};
+
 UCLASS()
 class AIUNREALPROJECT_API UApiItemObject : public UObject
 {
@@ -61,4 +77,7 @@ public:
 	void ParseItemInfo();
 
 	void LoadImageFromUrl(const FString& url);
+
+	FString GenerateItemsForMonsterIdsUrl = FString("http://127.0.0.1:8000/item/generate/monster_ids");
+	void GenerateItemsForMonsterIds(int id = 1, int item_count = 1);
 };

@@ -21,31 +21,22 @@ struct FMonsterRow
 public:
 	UPROPERTY(BlueprintReadWrite)
 	FString Name = "name";
-
 	UPROPERTY(BlueprintReadWrite)
 	int id = 1;
-
 	UPROPERTY(BlueprintReadWrite)
 	int level = 1;
-
 	UPROPERTY(BlueprintReadWrite)
 	int hp = 100;
-
 	UPROPERTY(BlueprintReadWrite)
 	int attack = 10;
-
 	UPROPERTY(BlueprintReadWrite)
 	FString habitat = "habitat";
-
 	UPROPERTY(BlueprintReadWrite)
 	FString description = "description";
-
 	UPROPERTY(BlueprintReadWrite)
 	TArray<int>drop_item_ids;
-	
 	UPROPERTY(BlueprintReadWrite)
 	FString image_url = "image_url";
-
 	UPROPERTY(BlueprintReadWrite)
 	UTexture2D* image;
 };
@@ -64,6 +55,8 @@ class AIUNREALPROJECT_API UApiMonsterObject : public UObject
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	FTimerHandle ImageGenerateTimer;
 
 	UPROPERTY(EditAnywhere)
 	FMonsterRows Rows;

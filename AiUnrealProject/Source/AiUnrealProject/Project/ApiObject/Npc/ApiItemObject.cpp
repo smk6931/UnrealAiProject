@@ -74,3 +74,34 @@ void UApiItemObject::LoadImageFromUrl(const FString& url)
 	});
 	Request->ProcessRequest();
 }
+
+void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count)
+{
+	FString String;
+	FMonsterGenerateItemRequest Request;
+	Request.id = id;
+	Request.item_count = item_count;
+	FJsonObjectConverter::UStructToJsonObjectString(Request, String);
+
+	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
+	HttpRequest->SetURL(FString::Printf(TEXT("%s"),*GenerateItemsForMonsterIdsUrl));
+	HttpRequest->SetVerb(TEXT("POST"));
+	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	HttpRequest->SetContentAsString(String);
+
+	HttpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSucceeded)
+	{
+		if (bSucceeded)
+		{
+			FItemRows Rows;
+			FString Response = Res->GetContentAsString();
+			FJsonObjectConverter::JsonObjectStringToUStruct(Response, &Rows);
+			if (Rows.response.Num() > 0)
+			{
+				UE_LOG(LogTemp,Warning,TEXT("GenerateItemFor 성공 %s"), *Rows.response[0].Name)
+			}
+			else
+			{ UE_LOG(LogTemp,Warning,TEXT("GenerateItemFor 실패 %s"), *Res->GetContentAsString()) }
+		}
+	});
+}

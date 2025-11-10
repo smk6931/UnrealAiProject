@@ -22,7 +22,10 @@ public:
 	class UMonsterInfoUi* BpMonsterInfoUi;
 
 	UPROPERTY(meta = (BindWidget))
-	class UGenerateUi* BpBpGenerateUi;
+	class UGenerateMonsterUi* BpGenerateMonsterUi;
+
+	UPROPERTY(meta = (BindWidget))
+	class UGenerateItemUi* BpGenerateItemUi;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Close;

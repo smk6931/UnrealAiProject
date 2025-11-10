@@ -3,6 +3,7 @@
 
 #include "ApiMonsterObject.h"
 
+#include "ApiItemObject.h"
 #include "HttpModule.h"
 #include "IImageWrapper.h"
 #include "IImageWrapperModule.h"
@@ -12,8 +13,7 @@
 
 void UApiMonsterObject::StartPollingMonsterImage(int32 id)
 {
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, id]()
+	GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this, id]()
 	{
 		UE_LOG(LogTemp, Display, TEXT("Polling Monster Image 3초 타이머"));
 		PollMonsterImageStatus(id);
@@ -46,8 +46,11 @@ void UApiMonsterObject::PollMonsterImageStatus(int32 id)
 				FString ImageUrl = JsonObj->GetStringField(TEXT("image_url"));
 				UE_LOG(LogTemp, Display, TEXT("✅ 이미지 생성 완료: %s"), *ImageUrl);
 
-				// 이미지 로드
+				FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*ImageUrl.Replace(TEXT("\\"), TEXT("/")));
+				WeakThis->LoadImageFromUrl(Str);
+
 				// WeakThis->LoadMonsterImageFromUrl(ImageUrl);
+			    // ImgRequest->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Str));
 			}
 		}
 	});
@@ -137,9 +140,9 @@ void UApiMonsterObject::CreateMonsterAi()
    	    FString JsonResponse = Res->GetContentAsString();
 		FJsonObjectConverter::JsonObjectStringToUStruct(JsonResponse, &Rows);
 
-   	    // UE_LOG(LogTemp, Display, TEXT("Monster 생성 응답: %s "),*JsonResponse);
    	    UE_LOG(LogTemp, Display, TEXT("Monster 생성 응답: %s 몬스터 id는 %d 첫행 이름 %s"),*JsonResponse, Rows.response[0].id, *Rows.response[0].Name);
 		WeakThis->StartPollingMonsterImage(Rows.response[0].id);
+		WeakThis->OnMonsterInfoResponse.ExecuteIfBound(JsonResponse);
     });
 	HttpRequest->ProcessRequest();
 }
