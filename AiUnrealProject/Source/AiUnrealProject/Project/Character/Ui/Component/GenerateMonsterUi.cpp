@@ -39,9 +39,7 @@ void UGenerateMonsterUi::OnCreateClick()
 	{
 		FMonsterRows Rows;
 		FJsonObjectConverter::JsonObjectStringToUStruct(String,&Rows);
-
 		UUiUtil* Util = NewObject<UUiUtil>(this);
-		
 		if (Rows.response.Num() > 0)
 		{
 			int FonsSize = 15;
@@ -92,6 +90,9 @@ void UGenerateMonsterUi::OnCreateClick()
 			Desc->SetMargin(FMargin(20.f));
 			Desc->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", FonsSize)));
 
+			MenuUi->BpGenerateItemUi->MonsterName->SetText(FText::FromString(Rows.response[0].Name));
+			MenuUi->BpGenerateItemUi->MonsterId->SetText(FText::AsNumber(Rows.response[0].id));
+			MenuUi->BpGenerateItemUi->MonsterRows = Rows;
 			// USizeBox* DropItemT= Util->MakeTextCell(this, TEXT("드랍 아이템"),100,FonsSize,FColor::Orange);
 			
 			RightVerticalBox->AddChild(DescT);

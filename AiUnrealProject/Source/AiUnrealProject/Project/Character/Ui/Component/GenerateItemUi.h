@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Project/ApiObject/Npc/ApiMonsterObject.h"
 #include "GenerateItemUi.generated.h"
 
 /**
@@ -16,6 +17,11 @@ class AIUNREALPROJECT_API UGenerateItemUi : public UUserWidget
 	
 public:
     virtual void NativeConstruct() override;
+
+	FMonsterRows MonsterRows;
+
+	UPROPERTY()
+	class UMenuUi* MenuUi;
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Close;
@@ -23,6 +29,15 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_CreateItem;
 
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MonsterName;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* MonsterId;
+
+	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* RightVerticalBox;
+	
 	UFUNCTION()
 	void OnCloseClick();
 

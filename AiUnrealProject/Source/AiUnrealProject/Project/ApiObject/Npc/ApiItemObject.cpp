@@ -75,13 +75,14 @@ void UApiItemObject::LoadImageFromUrl(const FString& url)
 	Request->ProcessRequest();
 }
 
-void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count)
+void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count, bool bimage)
 {
 	FString String;
 	FMonsterGenerateItemRequest Request;
-	Request.id = id;
+	Request.monster_id = id;
 	Request.item_count = item_count;
-	FJsonObjectConverter::UStructToJsonObjectString(Request, String);
+	Request.bimage = bimage;
+	FJsonObjectConverter::UStructToJsonObjectString(Request, String, bimage);
 
 	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
 	HttpRequest->SetURL(FString::Printf(TEXT("%s"),*GenerateItemsForMonsterIdsUrl));
@@ -99,9 +100,11 @@ void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count)
 			if (Rows.response.Num() > 0)
 			{
 				UE_LOG(LogTemp,Warning,TEXT("GenerateItemFor 성공 %s"), *Rows.response[0].Name)
+				OnItemInfoResponse.ExecuteIfBound(Response);
 			}
 			else
 			{ UE_LOG(LogTemp,Warning,TEXT("GenerateItemFor 실패 %s"), *Res->GetContentAsString()) }
 		}
 	});
+	HttpRequest->ProcessRequest();
 }

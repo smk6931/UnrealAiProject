@@ -14,6 +14,7 @@ void UMenuUi::NativeConstruct()
 {
 	Super::NativeConstruct();
 	BpGenerateMonsterUi->MenuUi = this;
+	BpGenerateItemUi->MenuUi = this;
 	
 	Button_Close->OnClicked.AddDynamic(this,&UMenuUi::OnCloseClick);
 	Button_Item->OnClicked.AddDynamic(this,&UMenuUi::OnItemClick);

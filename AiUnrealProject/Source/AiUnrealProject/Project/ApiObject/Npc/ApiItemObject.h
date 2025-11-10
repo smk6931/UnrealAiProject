@@ -55,7 +55,7 @@ struct FMonsterGenerateItemRequest
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite)
-	int id = 1;
+	int monster_id = 1;
 	UPROPERTY(BlueprintReadWrite)
 	int item_count = 1;
 	UPROPERTY(BlueprintReadWrite)
@@ -79,5 +79,5 @@ public:
 	void LoadImageFromUrl(const FString& url);
 
 	FString GenerateItemsForMonsterIdsUrl = FString("http://127.0.0.1:8000/item/generate/monster_ids");
-	void GenerateItemsForMonsterIds(int id = 1, int item_count = 1);
+	void GenerateItemsForMonsterIds(int id = 1, int item_count = 1, bool bimage = false);
 };
