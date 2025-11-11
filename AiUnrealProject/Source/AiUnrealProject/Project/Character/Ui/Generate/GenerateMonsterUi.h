@@ -19,6 +19,7 @@ class AIUNREALPROJECT_API UGenerateMonsterUi : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere)
 	FMonsterRows MonsterRows;
+
 	
 	UPROPERTY()
 	class UApiMonsterObject* Api;
@@ -28,6 +29,9 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	class USizeBox* SizeBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* WorldInfo;
 
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* LeftVerticalBox;
@@ -54,6 +58,9 @@ public:
 	class UButton* Button_Item;
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_World;
+
+	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* ItemDropListScroll;
 
 	virtual  void NativeConstruct() override;
@@ -69,5 +76,8 @@ public:
 
 	UFUNCTION()
 	void OnImageClick();
+
+	UFUNCTION()
+	void OnWorldClick();
 	
 };

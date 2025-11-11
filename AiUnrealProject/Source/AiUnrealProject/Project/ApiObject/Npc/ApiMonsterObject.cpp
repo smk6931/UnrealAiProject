@@ -82,7 +82,7 @@ void UApiMonsterObject::GetMonsters(int32 id)
 	Request->ProcessRequest();
 }
 
-void UApiMonsterObject::generate_monster_img(int32 id)
+void UApiMonsterObject::GenerateMonsterImg(int32 id)
 {
 	FString JsonString;
 	FMonsterIds MonsterIds;
@@ -153,6 +153,35 @@ void UApiMonsterObject::CreateMonsterAi()
 		WeakThis->OnMonsterInfoResponse.ExecuteIfBound(JsonResponse);
     });
 	HttpRequest->ProcessRequest();
+}
+
+void UApiMonsterObject::GenerateMonster(FString String)
+{
+	UE_LOG(LogTemp,Warning,TEXT("GenerateMonster Json값 %s"),*String)
+	
+	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
+	HttpRequest->SetURL("http://127.0.0.1:8000/monster/generate");
+	HttpRequest->SetTimeout(120.0f); 
+	HttpRequest->SetVerb(TEXT("POST"));
+	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	HttpRequest->SetContentAsString(String);
+
+	TWeakObjectPtr<UApiMonsterObject> WeakThis(this);
+	HttpRequest->OnProcessRequestComplete().BindLambda([WeakThis](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	{
+		if (!bSuccess){UE_LOG(LogTemp,Warning,TEXT("GenerateMonster bSuccess 실패")) return; }
+		
+		FMonsterRows Rows;
+		FJsonObjectConverter::JsonObjectStringToUStruct(Res->GetContentAsString(), &Rows);
+		if (Rows.response.Num() == 0)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("GenerateMonster 파싱 실패 Json : %s"), *Res->GetContentAsString()) return;
+		}
+		UE_LOG(LogTemp, Display, TEXT("Monster 생성 응답: %s 몬스터 id는 %d 첫행 이름 %s"),*Res->GetContentAsString(), Rows.response[0].id, *Rows.response[0].Name);
+		WeakThis->OnMonsterInfoResponse.ExecuteIfBound(Res->GetContentAsString());
+	});
+	HttpRequest->ProcessRequest();
+	
 }
 
 

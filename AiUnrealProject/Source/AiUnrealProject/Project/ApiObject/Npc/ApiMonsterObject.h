@@ -77,13 +77,14 @@ public:
 	
 	void GetMonsterAll();
 	void GetMonsters(int32 id);
+	void GenerateMonsterImg(int32 id);
 
-	void generate_monster_img(int32 id);
 	void GetItemMonsterIimerCheck(int32 id);
 	
 	void LoadImageFromUrl(const FString& url);
 
 	FString MonsterGenerateUrl = FString("http://127.0.0.1:8000/monster/generate");
 	void CreateMonsterAi();
+	void GenerateMonster(FString String);
 };
 

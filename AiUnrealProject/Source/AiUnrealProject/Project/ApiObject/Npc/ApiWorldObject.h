@@ -6,6 +6,8 @@
 #include "UObject/Object.h"
 #include "ApiWorldObject.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnWorldInfoResponse, FString String)
+
 /**
  * 
  */
@@ -20,10 +22,13 @@ public:
 	int32 id = 0;
 
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
-	FString title;
+	FString title = "InitTitle";
 
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
-	FString content;
+	FString content = "InitContent";
+
+	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
+	FString metadata = "InitMetadata";
 };
 
 USTRUCT(BlueprintType)
@@ -32,11 +37,16 @@ struct FWorldRows
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
-	TArray<FWorldRow> rows;
+	TArray<FWorldRow> Response;
 };
 
 UCLASS()
 class AIUNREALPROJECT_API UApiWorldObject : public UObject
 {
 	GENERATED_BODY()
+public:
+
+	FOnWorldInfoResponse OnWorldInfoResponse;
+	
+	void GetRandomWorld();
 };

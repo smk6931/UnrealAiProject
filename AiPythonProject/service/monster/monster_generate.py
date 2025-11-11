@@ -13,23 +13,23 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-def get_random_world_story(bimage : bool= False):
-    conn, cur = get_cursor()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute("""
-        SELECT id, title, content, metadata
-        FROM world_story
-        ORDER BY RANDOM()
-        LIMIT 1;
-    """)
-    world = cur.fetchone()
-    cur.close()
-    conn.close()
+# def get_random_world_story(bimage : bool= False):
+#     conn, cur = get_cursor()
+#     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+#     cur.execute("""
+#         SELECT id, title, content, metadata
+#         FROM world_story
+#         ORDER BY RANDOM()
+#         LIMIT 1;
+#     """)
+#     world = cur.fetchone()
+#     cur.close()
+#     conn.close()
 
-    print(f"선택된 월드{world["title"]}")
-    return generate_monster_from_world(world, bimage)
+#     print(f"선택된 월드{world["title"]}")
+#     return generate_monster_from_world(world, bimage)
 
-def generate_monster_from_world(world, bimage : bool= False):
+def generate_monster_from_world(world):
     meta = json.loads(world['metadata']) if isinstance(world['metadata'], str) else world['metadata']
     habitat_hint = meta.get('continent', '미지의 지역')
 
@@ -57,11 +57,12 @@ def generate_monster_from_world(world, bimage : bool= False):
             {"role": "user", "content": prompt}
         ]
     )
+    
     monster_json = json.loads(response.choices[0].message.content)
     # ✅ world_id 추가
     monster_json["world_id"] = world["id"]
 
-    return insert_monster(monster_json, bimage)
+    return insert_monster(monster_json)
 
 def insert_monster(monster, bimage: bool =False):
     text_for_embedding = f"{monster['name']} {monster['description']} {monster['habitat']}"

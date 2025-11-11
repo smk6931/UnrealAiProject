@@ -13,6 +13,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Project/ApiObject/Npc/ApiMonsterObject.h"
+#include "Project/ApiObject/Npc/ApiWorldObject.h"
 #include "Project/Character/Ui/MenuUi.h"
 #include "Project/Util/UiUtil.h"
 
@@ -26,12 +27,13 @@ void UGenerateMonsterUi::NativeConstruct()
 	Button_Close->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnCloseClick);
 	Button_Item->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnItemClick);
 	Button_Image->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnImageClick);
+	Button_World->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnWorldClick);
 }
 
 void UGenerateMonsterUi::OnCreateClick()
 {
-	UE_LOG(LogTemp, Display, TEXT("OnCreateClick 몬스터 생성 시작"));
 	
+	UE_LOG(LogTemp, Display, TEXT("OnCreateClick 몬스터 생성 시작"));
 	Api->OnMonsterInfoResponse.BindLambda([this](FString String)
 	{
 		Button_Image->SetVisibility(ESlateVisibility::Visible);
@@ -118,9 +120,27 @@ void UGenerateMonsterUi::OnImageClick()
 	Button_Image->SetVisibility(ESlateVisibility::Collapsed);
 
 	Api->GetItemMonsterIimerCheck(MonsterRows.response[0].id);
-	Api->generate_monster_img(MonsterRows.response[0].id);
+	Api->GenerateMonsterImg(MonsterRows.response[0].id);
 	Api->OnMonsterTextureResponse.BindLambda([this](UTexture2D* Texture)
     {
     	Icon->SetBrushFromTexture(Texture);
     });
 }
+
+void UGenerateMonsterUi::OnWorldClick()
+{
+	Button_World->SetVisibility(ESlateVisibility::Hidden);
+	
+	UE_LOG(LogTemp,Display,TEXT("OnWorldClick"));
+	UApiWorldObject* ApiWorld = NewObject<UApiWorldObject>(this);
+
+	ApiWorld->OnWorldInfoResponse.BindLambda([this](FString String)
+	{
+		FWorldRows Rows;
+		FJsonObjectConverter::JsonObjectStringToUStruct(String, &Rows);
+		WorldInfo->SetText(FText::FromString(FString::Printf(TEXT("[%s] 대륙의 몬스터를 생성"),*Rows.Response[0].title)));
+		Api->GenerateMonster(String);
+	});
+	ApiWorld->GetRandomWorld();
+}
+
