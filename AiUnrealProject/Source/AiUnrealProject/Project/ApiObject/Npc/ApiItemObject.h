@@ -90,7 +90,10 @@ public:
 	void LoadImageFromUrl(const FString& url);
 
 	FString GenerateItemsForMonsterIdsUrl = FString("http://127.0.0.1:8000/item/generate/monster_ids");
+	
 	void GenerateItemsForMonsterIds(int id = 1, int item_count = 1, bool bimage = false);
+
+	void GenerateItemImg(int32 id);
 
 	void GetItemImageTimerCheck(int32 id);
 };

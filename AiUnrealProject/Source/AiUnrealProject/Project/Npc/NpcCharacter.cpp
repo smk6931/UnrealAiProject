@@ -61,13 +61,6 @@ void ANpcCharacter::OpenItem()
 	{
 		Inventory = CreateWidget<UInventory>(GetWorld(),InventoryFactory);
 		Inventory->AddToViewport();
-		UApiItemObject* Api = NewObject<UApiItemObject>();
-		
-		/*Api->OnItemInfoResponse.BindWeakLambda(this,[this](FString String)
-		{
-			UE_LOG(LogTemp, Display, TEXT("ANpcCharacter::OpenItem UI최종 뿌려질 아이템 %s"),*String);
-		});
-		Api->ItemInfoResponse();*/
 	}
 	else
 	{

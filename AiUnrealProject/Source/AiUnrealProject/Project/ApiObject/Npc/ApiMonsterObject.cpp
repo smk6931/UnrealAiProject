@@ -13,12 +13,12 @@
 
 void UApiMonsterObject::StartPollingMonsterImage(int32 id)
 {
-	UE_LOG(LogTemp, Display, TEXT("StartPollingMonsterImage 시작"));
-	GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this, id]()
-	{
-		UE_LOG(LogTemp, Display, TEXT("Polling Monster Image 3초 타이머"));
-		PollMonsterImageStatus(id);
-	}, 3.0f, true); // 3초 
+	// UE_LOG(LogTemp, Display, TEXT("StartPollingMonsterImage 시작"));
+	// GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this, id]()
+	// {
+	// 	UE_LOG(LogTemp, Display, TEXT("Polling Monster Image 7초 타이머"));
+	// 	PollMonsterImageStatus(id);
+	// }, 7.0f, true); // 3초 
 }
 
 void UApiMonsterObject::PollMonsterImageStatus(int32 id)

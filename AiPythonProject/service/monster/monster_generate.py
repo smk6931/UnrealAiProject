@@ -13,7 +13,7 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-def get_random_world_story(bimage : bool= True):
+def get_random_world_story(bimage : bool= False):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
