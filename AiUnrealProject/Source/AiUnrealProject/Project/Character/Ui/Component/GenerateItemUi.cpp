@@ -25,7 +25,7 @@ void UGenerateItemUi::OnCloseClick()
 
 void UGenerateItemUi::OnCreateItemClick()
 {
-	UApiItemObject* Api = NewObject<UApiItemObject>();
+	UApiItemObject* Api = NewObject<UApiItemObject>(this);
 	Api->OnItemTextureResponse.BindLambda([this](UTexture2D* Texture)
 	{
 		Icon->SetBrushFromTexture(Texture);

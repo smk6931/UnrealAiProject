@@ -92,7 +92,7 @@ def generate_items_for_monster(monster_id: int, item_count: int = 1, bimage: boo
     print(f"✅ '{monster_name}' 몬스터에 {len(generated_item_ids)}개의 아이템 연결 완료!")
     print("📦 생성된 아이템 IDs:", generated_item_ids)
 
-    if bimage:
-       generate_item_image(generated_item_ids)
+    # if bimage:
+    #    generate_item_image(generated_item_ids)
     return generate_items
 

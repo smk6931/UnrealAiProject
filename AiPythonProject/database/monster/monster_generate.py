@@ -14,7 +14,7 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-def get_random_world_story(bimage : bool= False):
+def get_random_world_story(bimage : bool= True):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
@@ -31,7 +31,7 @@ def get_random_world_story(bimage : bool= False):
 
     return generate_monster_from_world(world, bimage)
 
-def generate_monster_from_world(world, bimage : bool= True):
+def generate_monster_from_world(world, bimage : bool= False):
     meta = json.loads(world['metadata']) if isinstance(world['metadata'], str) else world['metadata']
     habitat_hint = meta.get('continent', '미지의 지역')
 
