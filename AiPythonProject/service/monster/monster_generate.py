@@ -27,7 +27,6 @@ def get_random_world_story(bimage : bool= False):
     conn.close()
 
     print(f"선택된 월드{world["title"]}")
-
     return generate_monster_from_world(world, bimage)
 
 def generate_monster_from_world(world, bimage : bool= False):
@@ -95,10 +94,10 @@ def insert_monster(monster, bimage: bool =False):
     cur.close()
     conn.close()
     print(f"✅ 몬스터 '{monster['name']}' 생성 및 저장 완료! (world_id={monster['world_id']})")
-    
-    if bimage:
-       print("treading generate_monster_image 실행")
-       threading.Thread(target=generate_monster_image, args=([monster['id']],)).start()
-    #    generate_monster_image([monster['id']])
+
     return [monster]
+
+    # if bimage:
+    #    threading.Thread(target=generate_monster_image, args=([monster['id']],)).start()
+
 

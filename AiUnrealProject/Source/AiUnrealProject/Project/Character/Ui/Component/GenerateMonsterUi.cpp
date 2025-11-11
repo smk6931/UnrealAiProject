@@ -19,7 +19,9 @@
 void UGenerateMonsterUi::NativeConstruct()
 {
 	Super::NativeConstruct();
-
+	Api = NewObject<UApiMonsterObject>(this);
+	Button_Image->SetVisibility(ESlateVisibility::Collapsed);
+	
 	Button_Create->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnCreateClick);
 	Button_Close->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnCloseClick);
 	Button_Item->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnItemClick);
@@ -28,18 +30,15 @@ void UGenerateMonsterUi::NativeConstruct()
 
 void UGenerateMonsterUi::OnCreateClick()
 {
-	UE_LOG(LogTemp, Display, TEXT("OnCreateClick"));
-
-	Api = NewObject<UApiMonsterObject>(this);
-	Api->OnMonsterTextureResponse.BindLambda([this](UTexture2D* Texture)
-	{
-		Icon->SetBrushFromTexture(Texture);
-	});
-
+	UE_LOG(LogTemp, Display, TEXT("OnCreateClick 몬스터 생성 시작"));
+	
 	Api->OnMonsterInfoResponse.BindLambda([this](FString String)
 	{
+		Button_Image->SetVisibility(ESlateVisibility::Visible);
+		
 		FMonsterRows Rows;
 		FJsonObjectConverter::JsonObjectStringToUStruct(String,&Rows);
+		MonsterRows = Rows;
 		UUiUtil* Util = NewObject<UUiUtil>(this);
 		if (Rows.response.Num() > 0)
 		{
@@ -116,5 +115,12 @@ void UGenerateMonsterUi::OnItemClick()
 
 void UGenerateMonsterUi::OnImageClick()
 {
-	
+	Button_Image->SetVisibility(ESlateVisibility::Collapsed);
+
+	Api->GetItemMonsterIimerCheck(MonsterRows.response[0].id);
+	Api->generate_monster_img(MonsterRows.response[0].id);
+	Api->OnMonsterTextureResponse.BindLambda([this](UTexture2D* Texture)
+    {
+    	Icon->SetBrushFromTexture(Texture);
+    });
 }

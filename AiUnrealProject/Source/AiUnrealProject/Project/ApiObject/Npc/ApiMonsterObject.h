@@ -2,14 +2,12 @@
 
 #pragma once
 
-DECLARE_DELEGATE_OneParam(FOnMonsterInfoResponse, FString String)
-
-DECLARE_DELEGATE_OneParam(FOnMonsterTextureResponse, UTexture2D* Texture)
-
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "ApiMonsterObject.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnMonsterInfoResponse, FString String)
+DECLARE_DELEGATE_OneParam(FOnMonsterTextureResponse, UTexture2D* Texture)
 /**
  * 
  */
@@ -50,6 +48,18 @@ public:
 	TArray<FMonsterRow> response;
 };
 
+
+DECLARE_DELEGATE_OneParam(FOnMonsterStructsResponse, FMonsterRows MonsterRows)
+
+USTRUCT(BlueprintType)
+struct FMonsterIds
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TArray<int32> monster_ids;
+};
+
 UCLASS()
 class AIUNREALPROJECT_API UApiMonsterObject : public UObject
 {
@@ -59,15 +69,17 @@ public:
 	FTimerHandle ImageGenerateTimer;
 
 	UPROPERTY(EditAnywhere)
-	FMonsterRows Rows;
+	FMonsterRows MonsterRows;
 
+	FOnMonsterStructsResponse OnMonsterStructsResponse;
 	FOnMonsterInfoResponse OnMonsterInfoResponse;
 	FOnMonsterTextureResponse OnMonsterTextureResponse;
-
-	void StartPollingMonsterImage(int32 MonsterId);
-	void PollMonsterImageStatus(int32 MonsterId);
 	
-	void MonsterInfoResponse();
+	void GetMonsterAll();
+	void GetMonsters(int32 id);
+
+	void generate_monster_img(int32 id);
+	void GetItemMonsterIimerCheck(int32 id);
 	
 	void LoadImageFromUrl(const FString& url);
 

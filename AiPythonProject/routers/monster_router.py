@@ -1,15 +1,20 @@
+from typing import List
 from fastapi import APIRouter
 import psycopg2.extras
+from pydantic import BaseModel
 from db_config import get_cursor
 from models.monster import MonsterIds
-from service.monster.monster_createtable import select_monsters_all
+from service.monster.monster_database import select_monsters, select_monsters_all
 from service.monster.monster_generate import get_random_world_story
 from service.monster.monster_image_generate import generate_monster_image
 
 router = APIRouter()
 
+class MonsterIds(BaseModel):
+   monster_ids: List[int]
+
 @router.get("/monster")
-def get_monster_info_all():
+def get_monster_all():
   response = select_monsters_all()
   return {"response": response}
 
@@ -23,17 +28,7 @@ def get_generate_monster_fullinfo():
   response = get_random_world_story()
   return {"response": response}
 
-@router.get("/monster/image/{monster_id}")
-def get_monster_image_status(monster_id: int):
-    conn, cur = get_cursor()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-    cur.execute("SELECT image_url FROM monsters WHERE id = %s;", (monster_id,))
-    result = cur.fetchone()
-
-    cur.close()
-    conn.close()
-
-    if not result or not result["image_url"]:
-        return {"status": "processing"}
-    return {"status": "done", "image_url": result["image_url"]}
+@router.post("/monster/get/monster_ids")
+def get_monsters(data:MonsterIds):
+  response = select_monsters(data.monster_ids)
+  return{"response": response}

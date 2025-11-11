@@ -29,11 +29,6 @@ void UGenerateItemUi::OnCloseClick()
 
 void UGenerateItemUi::OnCreateItemClick()
 {
-	// UApiItemObject* Api = NewObject<UApiItemObject>(this);
-	// Api->OnItemTextureResponse.BindLambda([this](UTexture2D* Texture)
-	// {
-	// 	Icon->SetBrushFromTexture(Texture);
-	// });
 	Api->OnItemInfoResponse.BindLambda([this](FString String)
 	{
 		Button_Image->SetVisibility(ESlateVisibility::Visible);
@@ -49,6 +44,8 @@ void UGenerateItemUi::OnCreateItemClick()
 		Text->SetAutoWrapText(true);
 		Text->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 15)));
 		RightVerticalBox->AddChild(Text);
+
+		
 	});
 	Api->GenerateItemsForMonsterIds(MonsterRows.response[0].id, 1, false);
 }

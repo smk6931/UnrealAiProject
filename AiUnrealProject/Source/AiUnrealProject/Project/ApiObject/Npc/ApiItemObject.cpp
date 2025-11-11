@@ -80,14 +80,9 @@ void UApiItemObject::LoadImageFromUrl(const FString& url)
 	Request->ProcessRequest();
 }
 
-// if (Width <= 0 || Height <= 0) // ✅ 안전성 추가
-// { UE_LOG(LogTemp, Error, TEXT("❌ 이미지 크기 0 (Width:%d, Height:%d)"), Width, Height); return;}
-
-
 void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count, bool bimage)
 {
 	FString url = "http://127.0.0.1:8000/item/generate/monster_ids";
-	
 	FString String;
 	FMonsterGenerateItemRequest Request;
 	Request.monster_id = id;
@@ -115,10 +110,7 @@ void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count, bool bim
 				OnItemInfoResponse.ExecuteIfBound(Response);
 				GetItemImageTimerCheck(Rows.response[0].id);
 			}
-			else
-			{
-				UE_LOG(LogTemp,Warning,TEXT("GenerateItemFor 실패 %s"), *Res->GetContentAsString())
-			}
+			else { UE_LOG(LogTemp,Warning,TEXT("GenerateItemFor 실패 %s"), *Res->GetContentAsString()) }
 		}
 	});
 	HttpRequest->ProcessRequest();
@@ -130,9 +122,7 @@ void UApiItemObject::GenerateItemImg(int32 id)
 	FItemIds ItemIds;
 	ItemIds.item_ids.Add(id);
 	FJsonObjectConverter::UStructToJsonObjectString(ItemIds, JsonString);
-
 	UE_LOG(LogTemp, Display, TEXT("GenerateItemImg 아이템 생성 요청 Json파싱은? [%s]"),*JsonString);
-	
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 	Request->SetURL(FString("http://127.0.0.1:8000/item/image/generate"));
 	Request->SetVerb(TEXT("POST"));
@@ -144,7 +134,6 @@ void UApiItemObject::GenerateItemImg(int32 id)
 void UApiItemObject::GetItemImageTimerCheck(int32 id)
 {
 	this->AddToRoot();
-	// GenerateItemImg(id);
 	GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this, id]()
 	{
 		FString JsonString;

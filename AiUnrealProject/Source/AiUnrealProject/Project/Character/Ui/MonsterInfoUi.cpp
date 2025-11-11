@@ -100,7 +100,7 @@ void UMonsterInfoUi::LoadMonsters()
 			Api->LoadImageFromUrl(FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Str));
 		}
 	});
-	Api->MonsterInfoResponse();
+	Api->GetMonsterAll();
 }
 
 void UMonsterInfoUi::OnMonsterClicked()

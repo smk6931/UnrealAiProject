@@ -17,7 +17,7 @@ def generate_monster_image(monster_ids):
       select id, name, habitat, description
       from monsters
       where id = any(%s);
-  """, (monster_ids,))
+    """, (monster_ids,))
     rows = cur.fetchall()
 
     print(f"총 {len(rows)}개의 몬스터 이미지 생성 시작...")

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Project/ApiObject/Npc/ApiMonsterObject.h"
 #include "GenerateMonsterUi.generated.h"
 
 class UApiMonsterObject;
@@ -16,6 +17,9 @@ class AIUNREALPROJECT_API UGenerateMonsterUi : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere)
+	FMonsterRows MonsterRows;
+	
 	UPROPERTY()
 	class UApiMonsterObject* Api;
 

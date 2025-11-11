@@ -11,76 +11,92 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
-void UApiMonsterObject::StartPollingMonsterImage(int32 id)
+void UApiMonsterObject::GetMonsterAll()
 {
-	// UE_LOG(LogTemp, Display, TEXT("StartPollingMonsterImage 시작"));
-	// GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this, id]()
-	// {
-	// 	UE_LOG(LogTemp, Display, TEXT("Polling Monster Image 7초 타이머"));
-	// 	PollMonsterImageStatus(id);
-	// }, 7.0f, true); // 3초 
+	UE_LOG(LogTemp, Warning, TEXT("GetMonsterAll"));
+	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
+	HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/monster"));
+	HttpRequest->SetVerb(TEXT("GET"));
+	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	HttpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	{
+		FString response;
+		if (bSuccess && Res.IsValid() && Res->GetResponseCode() == 200)
+		{ UE_LOG(LogTemp, Warning, TEXT("MonsterInfoResponse성공 %s"),*Res->GetContentAsString()); }
+		else
+		{ UE_LOG(LogTemp, Warning, TEXT("MonsterInfoResponse실패")); }
+		AsyncTask(ENamedThreads::GameThread, [this,Res]()
+		{ OnMonsterInfoResponse.ExecuteIfBound(Res->GetContentAsString()); });
+	});
+	HttpRequest->ProcessRequest();
 }
 
-void UApiMonsterObject::PollMonsterImageStatus(int32 id)
+void UApiMonsterObject::GetItemMonsterIimerCheck(int32 id)
 {
-	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/monster/image/%d"), id));
-	Request->SetVerb(TEXT("GET"));
-	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
-
-	TWeakObjectPtr<UApiMonsterObject> WeakThis(this);
-
-	Request->OnProcessRequestComplete().BindLambda([WeakThis](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	OnMonsterInfoResponse.BindWeakLambda(this,[this,id](FString String)
 	{
-		if (!WeakThis.IsValid() || !Res.IsValid()) return;
-
-		FString JsonResponse = Res->GetContentAsString();
-		TSharedPtr<FJsonObject> JsonObj;
-		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonResponse);
-
-		if (FJsonSerializer::Deserialize(Reader, JsonObj) && JsonObj.IsValid())
+		FMonsterRows Rows;
+		FJsonObjectConverter::JsonObjectStringToUStruct(String,&Rows);
+		UE_LOG(LogTemp,Warning,TEXT("GetItemMonsterIimerCheck MonsterUrl [%s]"),*Rows.response[0].image_url)
+		
+		if (Rows.response[0].image_url != FItemRow().image_url)
 		{
-			FString Status = JsonObj->GetStringField(TEXT("status"));
-			if (Status == "done")
-			{
-				FString ImageUrl = JsonObj->GetStringField(TEXT("image_url"));
-				UE_LOG(LogTemp, Display, TEXT("✅ 이미지 생성 완료: %s"), *ImageUrl);
+			FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*MonsterRows.response[0].image_url.Replace(TEXT("\\"), TEXT("/")));
+			LoadImageFromUrl(Str);
+			GetWorld()->GetTimerManager().ClearTimer(ImageGenerateTimer);
+		}
+	});
+		
+	GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this,id]()
+	{
+		GetMonsters(id);
+	},3.0f, true);
+}
 
-				FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*ImageUrl.Replace(TEXT("\\"), TEXT("/")));
-				WeakThis->LoadImageFromUrl(Str);
-				WeakThis->GetWorld()->GetTimerManager().ClearTimer(WeakThis->ImageGenerateTimer);
-			}
+
+void UApiMonsterObject::GetMonsters(int32 id)
+{
+	FString JsonString;
+	FMonsterIds MonsterIds;
+	MonsterIds.monster_ids.Add(id);
+	FJsonObjectConverter::UStructToJsonObjectString(MonsterIds, JsonString);
+
+	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+	Request->SetURL("http://127.0.0.1:8000/monster/get/monster_ids");
+	Request->SetVerb(TEXT("POST"));
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetContentAsString(JsonString);
+	Request->OnProcessRequestComplete().BindWeakLambda(this, [this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	{
+		if (!bSuccess || !Res.IsValid() || Res->GetResponseCode() != 200)
+		{ UE_LOG(LogTemp, Warning, TEXT("GetMonsters 요청 실패 %s"), *Res->GetContentAsString()); return;}
+		FMonsterRows Rows;
+		FJsonObjectConverter::JsonObjectStringToUStruct(Res->GetContentAsString(), &Rows);
+		if (Rows.response.Num() > 0)
+		{
+			UE_LOG(LogTemp,Warning,TEXT("GetMonsters 파싱성공 %s | %s"), *Rows.response[0].Name, *Rows.response[0].image_url)
+			MonsterRows = Rows;
+			OnMonsterInfoResponse.ExecuteIfBound(Res->GetContentAsString());
 		}
 	});
 	Request->ProcessRequest();
 }
 
-void UApiMonsterObject::MonsterInfoResponse()
+void UApiMonsterObject::generate_monster_img(int32 id)
 {
-	UE_LOG(LogTemp, Warning, TEXT("MonsterInfoResponse"));
-	
-	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/monster"));
-	HttpRequest->SetVerb(TEXT("GET"));
-	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	FString JsonString;
+	FMonsterIds MonsterIds;
+	MonsterIds.monster_ids.Add(id);
+	FJsonObjectConverter::UStructToJsonObjectString(MonsterIds, JsonString);
 
-	HttpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
-	{
-		FString response;
-		if (bSuccess && Res.IsValid() && Res->GetResponseCode() == 200)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MonsterInfoResponse성공 %s"),*Res->GetContentAsString());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("MonsterInfoResponse실패"));
-		}
-		AsyncTask(ENamedThreads::GameThread, [this,Res]()
-		{
-			OnMonsterInfoResponse.ExecuteIfBound(Res->GetContentAsString());
-		});
-	});
-	HttpRequest->ProcessRequest();
+	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+	Request->SetURL(TEXT("http://127.0.0.1:8000/monster/image/generate"));
+	Request->SetVerb(TEXT("POST"));
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Request->SetContentAsString(JsonString);
+	Request->ProcessRequest();
+
+	GetItemMonsterIimerCheck(id);
 }
 
 void UApiMonsterObject::LoadImageFromUrl(const FString& url)
@@ -93,10 +109,8 @@ void UApiMonsterObject::LoadImageFromUrl(const FString& url)
 	Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
 	{
 		const TArray<uint8>& Data = Res->GetContent();
-
 		IImageWrapperModule& ImageWrapperModule = FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"));
 		TSharedPtr<IImageWrapper> Wrapper = ImageWrapperModule.CreateImageWrapper(EImageFormat::PNG);
-
 		if (Wrapper.IsValid() && Wrapper->SetCompressed(Data.GetData(), Data.Num()))
 		{
 			TArray<uint8> RawData;;
@@ -110,11 +124,8 @@ void UApiMonsterObject::LoadImageFromUrl(const FString& url)
 	        	FMemory::Memcpy(TextureData, RawData.GetData(), RawData.Num());
 	        	Texture->GetPlatformData()->Mips[0].BulkData.Unlock();
 	        	Texture->UpdateResource();
-            
 	        	AsyncTask(ENamedThreads::GameThread, [this,Texture]()
-	        	{
-	        		OnMonsterTextureResponse.ExecuteIfBound(Texture);
-	        	});
+	        	{ OnMonsterTextureResponse.ExecuteIfBound(Texture); });
 		    }
 		}
 	});
@@ -126,7 +137,7 @@ void UApiMonsterObject::CreateMonsterAi()
 	UE_LOG(LogTemp,Warning,TEXT("CreateMonsterAi"))
 	
 	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL(FString::Printf(TEXT("%s"),*MonsterGenerateUrl));
+	HttpRequest->SetURL("http://127.0.0.1:8000/monster/generate");
 	HttpRequest->SetTimeout(120.0f); 
 	HttpRequest->SetVerb(TEXT("POST"));
 	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
@@ -139,7 +150,6 @@ void UApiMonsterObject::CreateMonsterAi()
 		FJsonObjectConverter::JsonObjectStringToUStruct(JsonResponse, &Rows);
 
    	    UE_LOG(LogTemp, Display, TEXT("Monster 생성 응답: %s 몬스터 id는 %d 첫행 이름 %s"),*JsonResponse, Rows.response[0].id, *Rows.response[0].Name);
-		WeakThis->StartPollingMonsterImage(Rows.response[0].id);
 		WeakThis->OnMonsterInfoResponse.ExecuteIfBound(JsonResponse);
     });
 	HttpRequest->ProcessRequest();
