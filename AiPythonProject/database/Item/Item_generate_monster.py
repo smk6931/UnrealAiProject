@@ -1,16 +1,15 @@
 import sys
 import os
+from database.Item.item_image_generate import generate_item_image
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
-import psycopg2
 from openai import OpenAI
 from db_config import get_cursor
 import json
 
 client = OpenAI()
 
-def generate_items_for_monster(
-  monster_id: int, item_count: int = 3):
+def generate_items_for_monster(monster_id: int, item_count: int = 1, bimage: bool=False):
     conn, cur = get_cursor()
 
     # 1️⃣ 몬스터 정보 조회
@@ -53,6 +52,7 @@ def generate_items_for_monster(
         print("원본 응답:", response.choices[0].message.content)
         return
 
+    generate_items = []
     generated_item_ids = []
 
     # 3️⃣ 각 아이템을 DB에 저장
@@ -71,11 +71,12 @@ def generate_items_for_monster(
         cur.execute("""
             INSERT INTO items (world_id, monster_id, name, rarity, type, description, embedding)
             VALUES (%s, %s, %s, %s, %s, %s, %s)
-            RETURNING id;
+            RETURNING id, name, rarity, type, description, image_url;
         """, (world_id, monster_id, item_name, rarity, item_type, desc, embedding))
 
-        item_id = cur.fetchone()[0]
-        generated_item_ids.append(item_id)
+        new_item = cur.fetchone()
+        generated_item_ids.append(new_item[0])
+        generate_items.append(dict(new_item))
 
     # 4️⃣ 몬스터 테이블의 drop_item_ids 업데이트
     cur.execute("""
@@ -83,16 +84,15 @@ def generate_items_for_monster(
         SET drop_item_ids = %s
         WHERE id = %s;
     """, (generated_item_ids, monster_id))
-
+    
     conn.commit()
     cur.close()
     conn.close()
 
     print(f"✅ '{monster_name}' 몬스터에 {len(generated_item_ids)}개의 아이템 연결 완료!")
     print("📦 생성된 아이템 IDs:", generated_item_ids)
-    return generated_item_ids
 
+    if bimage:
+       generate_item_image(generated_item_ids)
+    return generate_items
 
-if __name__ == "__main__":
-    # 예: 몬스터 ID=4 (드래곤), 아이템 3개 생성
-    generate_items_for_monster(monster_id=10, item_count=3)

@@ -1,4 +1,4 @@
-import psycopg2
+import psycopg2.extras
 from dotenv import load_dotenv
 import os
 
@@ -21,7 +21,9 @@ def get_connection():
 
 def get_cursor():
     conn = get_connection()
-    cur = conn.cursor()
+    # cur = conn.cursor()
+
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     if conn is None:
         return None, None

@@ -1,5 +1,10 @@
 import sys
 import os
+import threading
+
+from database.monster.monster_image_generate import generate_monster_image
+
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 import json
@@ -9,7 +14,7 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-def get_random_world_story():
+def get_random_world_story(bimage : bool= False):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
@@ -21,10 +26,12 @@ def get_random_world_story():
     world = cur.fetchone()
     cur.close()
     conn.close()
-    return dict(world)   # world['id'] 포함됨
 
-def generate_monster_from_world(world):
-    # metadata 안에 habitat(서식지) 정보가 있을 수도 있음
+    print(f"선택된 월드{world["title"]}")
+
+    return generate_monster_from_world(world, bimage)
+
+def generate_monster_from_world(world, bimage : bool= True):
     meta = json.loads(world['metadata']) if isinstance(world['metadata'], str) else world['metadata']
     habitat_hint = meta.get('continent', '미지의 지역')
 
@@ -52,13 +59,13 @@ def generate_monster_from_world(world):
             {"role": "user", "content": prompt}
         ]
     )
-
     monster_json = json.loads(response.choices[0].message.content)
     # ✅ world_id 추가
     monster_json["world_id"] = world["id"]
-    return monster_json
 
-def insert_monster(monster):
+    return insert_monster(monster_json, bimage)
+
+def insert_monster(monster, bimage: bool =False):
     text_for_embedding = f"{monster['name']} {monster['description']} {monster['habitat']}"
     embedding = client.embeddings.create(
         model="text-embedding-3-small",
@@ -71,6 +78,7 @@ def insert_monster(monster):
     cur.execute("""
         INSERT INTO monsters (name, level, hp, attack, habitat, description, embedding, world_id)
         VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+        returning id;        
     """, (
         monster['name'],
         monster['level'],
@@ -81,17 +89,17 @@ def insert_monster(monster):
         embedding,
         monster['world_id']
     ))
+    monster_id = cur.fetchone()[0]
+    monster['id'] = monster_id
 
     conn.commit()
     cur.close()
     conn.close()
     print(f"✅ 몬스터 '{monster['name']}' 생성 및 저장 완료! (world_id={monster['world_id']})")
+    
+    if bimage:
+       print("treading generate_monster_image 실행")
+       threading.Thread(target=generate_monster_image, args=([monster['id']],)).start()
+    #    generate_monster_image([monster['id']])
+    return [monster]
 
-if __name__ == "__main__":
-    world = get_random_world_story()
-    print(f"🎯 선택된 세계관: {world['title']} (id={world['id']})")
-
-    monster = generate_monster_from_world(world)
-    print(f"👾 생성된 몬스터: {monster['name']}")
-
-    insert_monster(monster)

@@ -9,7 +9,6 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-
 def generate_monster_image(monster_ids):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -63,7 +62,6 @@ def generate_monster_image(monster_ids):
             raise ValueError("이미지 데이터가 비어 있음")
 
           image_bytes = base64.b64decode(image_data)
-
           image_path = os.path.join("image/monster", f"{translate_name}.png")
 
           with open(image_path, "wb") as f:
@@ -78,6 +76,16 @@ def generate_monster_image(monster_ids):
         except Exception as e:
           print(f'[{row["id"]}] "{row["name"]}" 이미지 생성 실패 : {e}')
 
+    cur.execute("""
+        SELECT id, name, level, hp, attack, habitat, description, image_url
+        FROM monsters
+        WHERE id = ANY(%s);
+    """, (monster_ids,))
+
     cur.close()
     conn.close()
     print("✅ 모든 몬스터 이미지 저장 완료!")
+
+    # result_rows = cur.fetchall()
+    # return [dict (row) for row in result_rows]
+
