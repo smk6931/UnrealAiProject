@@ -13,6 +13,7 @@
 
 void UApiMonsterObject::StartPollingMonsterImage(int32 id)
 {
+	UE_LOG(LogTemp, Display, TEXT("StartPollingMonsterImage 시작"));
 	GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer, [this, id]()
 	{
 		UE_LOG(LogTemp, Display, TEXT("Polling Monster Image 3초 타이머"));
@@ -22,7 +23,6 @@ void UApiMonsterObject::StartPollingMonsterImage(int32 id)
 
 void UApiMonsterObject::PollMonsterImageStatus(int32 id)
 {
-	UE_LOG(LogTemp, Display, TEXT("PollMonsterImageStatus 실행"));
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
 	Request->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/monster/image/%d"), id));
 	Request->SetVerb(TEXT("GET"));
@@ -48,6 +48,7 @@ void UApiMonsterObject::PollMonsterImageStatus(int32 id)
 
 				FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*ImageUrl.Replace(TEXT("\\"), TEXT("/")));
 				WeakThis->LoadImageFromUrl(Str);
+				WeakThis->GetWorld()->GetTimerManager().ClearTimer(WeakThis->ImageGenerateTimer);
 
 				// WeakThis->LoadMonsterImageFromUrl(ImageUrl);
 			    // ImgRequest->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Str));

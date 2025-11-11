@@ -37,6 +37,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* RightVerticalBox;
+
+	UPROPERTY(meta = (BindWidget))
+	class UImage* Icon;
 	
 	UFUNCTION()
 	void OnCloseClick();

@@ -3,7 +3,7 @@
 #pragma once
 
 DECLARE_DELEGATE_OneParam(FOnItemInfoResponse, FString String)
-
+DECLARE_DELEGATE_OneParam(FOnItemTextureResponse, UTexture2D* Texture)
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
 #include "ApiItemObject.generated.h"
@@ -68,10 +68,14 @@ class AIUNREALPROJECT_API UApiItemObject : public UObject
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere)
+	FTimerHandle ImageGenerateTimer;
+	
+	UPROPERTY(EditAnywhere)
 	FItemRows Rows;
 	
 	FOnItemInfoResponse OnItemInfoResponse;
-
+    FOnItemTextureResponse OnItemTextureResponse;
+	
 	void ItemInfoResponse();
 
 	void ParseItemInfo();
@@ -80,4 +84,7 @@ public:
 
 	FString GenerateItemsForMonsterIdsUrl = FString("http://127.0.0.1:8000/item/generate/monster_ids");
 	void GenerateItemsForMonsterIds(int id = 1, int item_count = 1, bool bimage = false);
+
+	void GetItemImageTimerCheck(int32 id);
+	void GetItemImage(int32 id);
 };

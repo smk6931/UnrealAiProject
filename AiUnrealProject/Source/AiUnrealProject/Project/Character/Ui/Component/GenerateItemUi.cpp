@@ -6,6 +6,7 @@
 #include "JsonObjectConverter.h"
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Project/ApiObject/Npc/ApiItemObject.h"
@@ -25,6 +26,10 @@ void UGenerateItemUi::OnCloseClick()
 void UGenerateItemUi::OnCreateItemClick()
 {
 	UApiItemObject* Api = NewObject<UApiItemObject>();
+	Api->OnItemTextureResponse.BindLambda([this](UTexture2D* Texture)
+	{
+		Icon->SetBrushFromTexture(Texture);
+	});
 	Api->OnItemInfoResponse.BindLambda([this](FString String)
 	{
 		FItemRows Rows;
@@ -40,5 +45,4 @@ void UGenerateItemUi::OnCreateItemClick()
 		RightVerticalBox->AddChild(Text);
 	});
 	Api->GenerateItemsForMonsterIds(MonsterRows.response[0].id, 1, false);
-	
 }
