@@ -49,9 +49,6 @@ void UApiMonsterObject::PollMonsterImageStatus(int32 id)
 				FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*ImageUrl.Replace(TEXT("\\"), TEXT("/")));
 				WeakThis->LoadImageFromUrl(Str);
 				WeakThis->GetWorld()->GetTimerManager().ClearTimer(WeakThis->ImageGenerateTimer);
-
-				// WeakThis->LoadMonsterImageFromUrl(ImageUrl);
-			    // ImgRequest->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Str));
 			}
 		}
 	});

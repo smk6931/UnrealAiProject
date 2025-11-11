@@ -35,6 +35,9 @@ public:
 	class UImage* Icon;
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_Image;
+
+	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* Title;
 
 	UPROPERTY(meta = (BindWidget))
@@ -59,5 +62,8 @@ public:
 
 	UFUNCTION()
 	void OnItemClick();
+
+	UFUNCTION()
+	void OnImageClick();
 	
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Project/ApiObject/Npc/ApiItemObject.h"
 #include "Project/ApiObject/Npc/ApiMonsterObject.h"
 #include "GenerateItemUi.generated.h"
 
@@ -19,6 +20,10 @@ public:
     virtual void NativeConstruct() override;
 
 	FMonsterRows MonsterRows;
+	FItemRows ItemRows;
+
+	UPROPERTY(EditAnywhere)
+	UApiItemObject* Api;
 
 	UPROPERTY()
 	class UMenuUi* MenuUi;
@@ -28,6 +33,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_CreateItem;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_Image;
 
 	UPROPERTY(meta = (BindWidget))
 	class UTextBlock* MonsterName;
@@ -46,4 +54,7 @@ public:
 
 	UFUNCTION()
 	void OnCreateItemClick();
+
+	UFUNCTION()
+	void OnImageClick();
 };

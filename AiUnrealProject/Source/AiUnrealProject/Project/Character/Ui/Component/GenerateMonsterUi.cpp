@@ -23,6 +23,7 @@ void UGenerateMonsterUi::NativeConstruct()
 	Button_Create->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnCreateClick);
 	Button_Close->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnCloseClick);
 	Button_Item->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnItemClick);
+	Button_Image->OnClicked.AddDynamic(this, &UGenerateMonsterUi::OnImageClick);
 }
 
 void UGenerateMonsterUi::OnCreateClick()
@@ -111,4 +112,9 @@ void UGenerateMonsterUi::OnCloseClick()
 void UGenerateMonsterUi::OnItemClick()
 {
 	MenuUi->BpGenerateItemUi->SetVisibility(ESlateVisibility::Visible);
+}
+
+void UGenerateMonsterUi::OnImageClick()
+{
+	
 }
