@@ -37,36 +37,85 @@ void UApiItemObject::ItemInfoResponse()
 void UApiItemObject::LoadImageFromUrl(const FString& url)
 {
 	UE_LOG(LogTemp, Warning, TEXT("LoadImageFromUrl 이미지 요청"));
+
 	FHttpModule* Http = &FHttpModule::Get();
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->SetURL(url);
 	Request->SetVerb("GET");
-	
-	Request->OnProcessRequestComplete().BindLambda([=, this](
+
+	TWeakObjectPtr<UApiItemObject> WeakThis(this);
+
+	Request->OnProcessRequestComplete().BindLambda([WeakThis](
 		FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSucceeded)
 	{
+		// ✅ [1] 유효성 먼저 검사
 		if (!bSucceeded || !Res.IsValid())
-		{ UE_LOG(LogTemp, Error, TEXT("❌ 이미지 요청 실패 또는 응답 없음")) return; }
-		if (Res->GetResponseCode() != 200)
-		{ UE_LOG(LogTemp, Error, TEXT("❌ HTTP 오류 코드: %d"), Res->GetResponseCode()); return; }
-		if (Res->GetContent().Num() == 0)
-		{ UE_LOG(LogTemp, Error, TEXT("❌ 이미지 데이터가 비어 있음")); return; }
-		
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ 이미지 요청 실패 또는 응답 없음"));
+			return;
+		}
+
+		TArray<uint8> Data = Res->GetContent();
+		if (Data.Num() == 0)
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ 이미지 데이터가 비어 있음"));
+			return;
+		}
+
+		// ✅ [2] ImageWrapper 생성 및 압축 데이터 세팅
 		TSharedPtr<IImageWrapper> Wrapper =
-			FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper")).
-		    CreateImageWrapper(EImageFormat::PNG);
-		
-		const TArray<uint8>* RGBA = nullptr;
-		UTexture2D* Texture = UTexture2D::CreateTransient(
-			Wrapper->GetWidth(), Wrapper->GetHeight(), PF_B8G8R8A8);
+			FModuleManager::LoadModuleChecked<IImageWrapperModule>(FName("ImageWrapper"))
+			.CreateImageWrapper(EImageFormat::PNG);
+
+		if (!Wrapper.IsValid() || !Wrapper->SetCompressed(Data.GetData(), Data.Num())) // ✅ 수정됨
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ PNG 압축 해제 실패"));
+			return;
+		}
+
+		// ✅ [3] RGBA 디코드
+		TArray<uint8> RGBA;
+		if (!Wrapper->GetRaw(ERGBFormat::BGRA, 8, RGBA))
+        {
+        	UE_LOG(LogTemp, Error, TEXT("❌ RGBA 변환 실패"));
+        	return;
+        }
+
+		int32 Width = Wrapper->GetWidth();
+		int32 Height = Wrapper->GetHeight();
+
+		if (Width <= 0 || Height <= 0) // ✅ 안전성 추가
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ 이미지 크기 0 (Width:%d, Height:%d)"), Width, Height);
+			return;
+		}
+
+		// ✅ [4] Texture 생성 (PlatformData null 방지)
+		UTexture2D* Texture = UTexture2D::CreateTransient(Width, Height, PF_B8G8R8A8);
+		if (!Texture || !Texture->GetPlatformData()) // ✅ 추가 안정성 검사
+		{
+			UE_LOG(LogTemp, Error, TEXT("❌ Texture 생성 실패"));
+			return;
+		}
+
+		// ✅ [5] RGBA 데이터를 Texture로 복사
 		void* TextureData = Texture->GetPlatformData()->Mips[0].BulkData.Lock(LOCK_READ_WRITE);
-		FMemory::Memcpy(TextureData, RGBA->GetData(), RGBA->Num());
+		FMemory::Memcpy(TextureData, RGBA.GetData(), RGBA.Num());
 		Texture->GetPlatformData()->Mips[0].BulkData.Unlock();
 		Texture->UpdateResource();
-		OnItemTextureResponse.ExecuteIfBound(Texture);
+
+		UE_LOG(LogTemp, Display, TEXT("✅ 이미지 로드 완료: %dx%d"), Width, Height);
+
+		// ✅ [6] 델리게이트 안전 실행
+		if (WeakThis.IsValid() && WeakThis->OnItemTextureResponse.IsBound())
+		{
+			WeakThis->OnItemTextureResponse.Execute(Texture);
+		}
 	});
+
 	Request->ProcessRequest();
 }
+
 
 void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count, bool bimage)
 {
