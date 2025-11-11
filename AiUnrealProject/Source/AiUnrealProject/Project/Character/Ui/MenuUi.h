@@ -40,6 +40,10 @@ public:
 	class UButton* Button_Item;
 
 	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_World;
+
+
+	UPROPERTY(meta = (BindWidget))
 	class UBorder* Board;
 
 	UFUNCTION()
@@ -49,10 +53,15 @@ public:
 	void OnMonsterClick();
 
 	UFUNCTION()
+	void OnWorldClick();
+
+	UFUNCTION()
 	void OnCreateClick();
 
 	UFUNCTION()
 	void OnItemClick();
+
+	void ButtonCLose();
 
 	virtual void NativeConstruct() override;
 };

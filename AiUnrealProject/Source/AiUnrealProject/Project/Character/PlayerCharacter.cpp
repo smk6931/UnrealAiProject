@@ -6,7 +6,6 @@
 #include "LandscapeEditTypes.h"
 #include "Project/ApiObject/Npc/ApiItemObject.h"
 #include "Project/Npc/NpcCharacter.h"
-#include "Ui/ItemInfoUi.h"
 #include "Ui/MenuUi.h"
 
 
