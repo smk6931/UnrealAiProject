@@ -47,6 +47,9 @@ public:
 	class UVerticalBox* RightVerticalBox;
 
 	UPROPERTY(meta = (BindWidget))
+	class UVerticalBox* LeftVerticalBox;
+
+	UPROPERTY(meta = (BindWidget))
 	class UImage* Icon;
 	
 	UFUNCTION()
