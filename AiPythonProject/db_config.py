@@ -21,10 +21,9 @@ def get_connection():
 
 def get_cursor():
     conn = get_connection()
-    # cur = conn.cursor()
-
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    # cur = conn.cursor()
     if conn is None:
         return None, None
     

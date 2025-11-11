@@ -2,8 +2,7 @@ import sys
 import os
 import threading
 
-from database.monster.monster_image_generate import generate_monster_image
-
+from service.monster.monster_image_generate import generate_monster_image
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 

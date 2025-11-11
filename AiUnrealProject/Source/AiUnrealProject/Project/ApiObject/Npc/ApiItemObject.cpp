@@ -37,19 +37,6 @@ void UApiItemObject::ItemInfoResponse()
 	HttpRequest->ProcessRequest();
 }
 
-void UApiItemObject::ParseItemInfo()
-{
-	ItemInfoResponse();
-	OnItemInfoResponse.BindWeakLambda(this,[this](FString String)
-	{
-		FJsonObjectConverter::JsonObjectStringToUStruct(String,&Rows);
-		for (int i=0;i<Rows.response.Num();i++)
-		{
-			UE_LOG(LogTemp,Warning,TEXT("ParseITemInfo아이템목록 %d 번째 %s"),i, *Rows.response[i].Name)
-		}
-	});
-}
-
 void UApiItemObject::LoadImageFromUrl(const FString& url)
 {
 	UE_LOG(LogTemp, Warning, TEXT("LoadImageFromUrl 이미지 요청"));
@@ -88,19 +75,19 @@ void UApiItemObject::LoadImageFromUrl(const FString& url)
 	Request->ProcessRequest();
 }
 
-
-
 void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count, bool bimage)
 {
+	FString url = "http://127.0.0.1:8000/item/generate/monster_ids";
+	
 	FString String;
 	FMonsterGenerateItemRequest Request;
 	Request.monster_id = id;
 	Request.item_count = item_count;
 	Request.bimage = bimage;
 	FJsonObjectConverter::UStructToJsonObjectString(Request, String);
-
+	
 	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL(FString::Printf(TEXT("%s"),*GenerateItemsForMonsterIdsUrl));
+	HttpRequest->SetURL(FString::Printf(TEXT("%s"),*url));
 	HttpRequest->SetVerb(TEXT("POST"));
 	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	HttpRequest->SetContentAsString(String);
@@ -132,43 +119,77 @@ void UApiItemObject::GetItemImageTimerCheck(int32 id)
 {
 	GetWorld()->GetTimerManager().SetTimer(ImageGenerateTimer,[this,id]()
 	{
-		UE_LOG(LogTemp,Warning,TEXT("GetItemImageTimerCheck 3초마다"));
-		GetItemImage(id);
+		FString JsonString;
+		FItemIds ItemIds;
+		ItemIds.item_ids[0] = id;
+        FJsonObjectConverter::UStructToJsonObjectString(ItemIds, JsonString);
+		
+		UE_LOG(LogTemp, Display, TEXT("PollMonsterImageStatus 3초마다 실행"));
+	    FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+		
+	    Request->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/item/get/item_ids")));
+	    Request->SetVerb(TEXT("GET"));
+	    Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+		Request->SetContentAsString(JsonString);
+		
+	    TWeakObjectPtr<UApiItemObject> WeakThis(this);
+    
+	    Request->OnProcessRequestComplete().BindLambda([WeakThis](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	    {
+	    	if (bSuccess || !WeakThis.IsValid() || !Res.IsValid()) return;
+	    	
+	    	FItemRows Rows;
+	    	FJsonObjectConverter::JsonObjectStringToUStruct(Res->GetContentAsString(), &Rows);
+	    	UE_LOG(LogTemp, Display, TEXT("GetItemImageTimerCheck Response값 %s \n 변환된 Rows [%s]"),*Res->GetContentAsString(), *Rows.response[0].Name);
+	    	
+	    	if (Rows.response[0].image_url == FItemRows().response[0].image_url)
+	    	{ UE_LOG(LogTemp, Display, TEXT("GetItemImageTimerCheck 이미지 변환 아직 안됨"));return; }
+
+	    	UE_LOG(LogTemp, Display, TEXT("GetItemImageTimerCheck 이미지 Url가져오기 성공 [%s]"),*Rows.response[0].image_url);
+	    	FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*Rows.response[0].image_url.Replace(TEXT("\\"), TEXT("/")));
+	    	WeakThis->LoadImageFromUrl(Str);
+	    	WeakThis->GetWorld()->GetTimerManager().ClearTimer(WeakThis->ImageGenerateTimer);
+	    	
+	    });
+	    Request->ProcessRequest();
 	},3,true);
 }
 
-void UApiItemObject::GetItemImage(int32 id)
-{
-	UE_LOG(LogTemp, Display, TEXT("PollMonsterImageStatus 실행"));
-	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/item/image/%d"), id));
-	Request->SetVerb(TEXT("GET"));
-	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
-	TWeakObjectPtr<UApiItemObject> WeakThis(this);
 
-	Request->OnProcessRequestComplete().BindLambda([WeakThis](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
-	{
-		if (!WeakThis.IsValid() || !Res.IsValid()) return;
 
-		FString JsonResponse = Res->GetContentAsString();
-		TSharedPtr<FJsonObject> JsonObj;
-		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonResponse);
-
-		if (FJsonSerializer::Deserialize(Reader, JsonObj) && JsonObj.IsValid())
-		{
-			FString Status = JsonObj->GetStringField(TEXT("status"));
-			if (Status == "done")
-			{
-				UE_LOG(LogTemp, Display, TEXT("✅ 이미지 생성 완료: 타이머 삭제 %s"), *JsonObj->GetStringField(TEXT("image_url")));
-			    WeakThis->GetWorld()->GetTimerManager().ClearTimer(WeakThis->ImageGenerateTimer);
-				
-				FString ImageUrl = JsonObj->GetStringField(TEXT("image_url"));
-				FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*ImageUrl.Replace(TEXT("\\"), TEXT("/")));
-				WeakThis->LoadImageFromUrl(Str);
-			
-			}
-		}
-	});
-	Request->ProcessRequest();
-}
+// void UApiItemObject::GetItemImage(int32 id)
+// {
+// 	UE_LOG(LogTemp, Display, TEXT("PollMonsterImageStatus 실행"));
+// 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+// 	Request->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/item/get/item_ids")));
+// 	Request->SetVerb(TEXT("GET"));
+// 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+//
+// 	TWeakObjectPtr<UApiItemObject> WeakThis(this);
+//
+// 	Request->OnProcessRequestComplete().BindLambda([WeakThis](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+// 	{
+// 		if (!WeakThis.IsValid() || !Res.IsValid()) return;
+//
+// 		FString JsonResponse = Res->GetContentAsString();
+// 		TSharedPtr<FJsonObject> JsonObj;
+// 		const TSharedRef<TJsonReader<>> Reader = TJsonReaderFactory<>::Create(JsonResponse);
+//
+// 		if (FJsonSerializer::Deserialize(Reader, JsonObj) && JsonObj.IsValid())
+// 		{
+// 			FString Status = JsonObj->GetStringField(TEXT("status"));
+// 			if (Status == "done")
+// 			{
+// 				UE_LOG(LogTemp, Display, TEXT("✅ 이미지 생성 완료: 타이머 삭제 %s"), *JsonObj->GetStringField(TEXT("image_url")));
+// 			    WeakThis->GetWorld()->GetTimerManager().ClearTimer(WeakThis->ImageGenerateTimer);
+// 				
+// 				FString ImageUrl = JsonObj->GetStringField(TEXT("image_url"));
+// 				FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*ImageUrl.Replace(TEXT("\\"), TEXT("/")));
+// 				WeakThis->LoadImageFromUrl(Str);
+// 			
+// 			}
+// 		}
+// 	});
+// 	Request->ProcessRequest();
+// }

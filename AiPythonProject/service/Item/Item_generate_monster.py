@@ -1,6 +1,7 @@
 import sys
 import os
-from database.Item.item_image_generate import generate_item_image
+
+import psycopg2.extras
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 from openai import OpenAI
@@ -11,18 +12,15 @@ client = OpenAI()
 
 def generate_items_for_monster(monster_id: int, item_count: int = 1, bimage: bool=False):
     conn, cur = get_cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     # 1️⃣ 몬스터 정보 조회
     cur.execute("SELECT id, name, description, world_id FROM monsters WHERE id = %s;", (monster_id,))
     monster = cur.fetchone()
 
-    if not monster:
-        print("❌ 몬스터를 찾을 수 없습니다.")
-        return
-
-    monster_name = monster[1]
-    monster_desc = monster[2]
-    world_id = monster[3]
+    monster_name = monster['name']
+    monster_desc = monster['description']
+    world_id = monster['world_id']
 
     print(f"🎯 몬스터 '{monster_name}' 기반 아이템 {item_count}개 생성 중...")
 
@@ -48,8 +46,7 @@ def generate_items_for_monster(monster_id: int, item_count: int = 1, bimage: boo
     try:
         items_data = json.loads(response.choices[0].message.content)
     except Exception as e:
-        print("❌ JSON 파싱 오류:", e)
-        print("원본 응답:", response.choices[0].message.content)
+        print("원본 응답:", response.choices[0].message.content, "\n", "JSON 파싱 오류:", e)
         return
 
     generate_items = []
@@ -92,7 +89,8 @@ def generate_items_for_monster(monster_id: int, item_count: int = 1, bimage: boo
     print(f"✅ '{monster_name}' 몬스터에 {len(generated_item_ids)}개의 아이템 연결 완료!")
     print("📦 생성된 아이템 IDs:", generated_item_ids)
 
+    return generate_items
+
     # if bimage:
     #    generate_item_image(generated_item_ids)
-    return generate_items
 

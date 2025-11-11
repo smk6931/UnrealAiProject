@@ -62,6 +62,15 @@ public:
 	bool bimage = false;
 };
 
+USTRUCT(BlueprintType)
+struct FItemIds
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TArray<int32> item_ids;
+};
+
 UCLASS()
 class AIUNREALPROJECT_API UApiItemObject : public UObject
 {
@@ -77,14 +86,11 @@ public:
     FOnItemTextureResponse OnItemTextureResponse;
 	
 	void ItemInfoResponse();
-
-	void ParseItemInfo();
-
+	
 	void LoadImageFromUrl(const FString& url);
 
 	FString GenerateItemsForMonsterIdsUrl = FString("http://127.0.0.1:8000/item/generate/monster_ids");
 	void GenerateItemsForMonsterIds(int id = 1, int item_count = 1, bool bimage = false);
 
 	void GetItemImageTimerCheck(int32 id);
-	void GetItemImage(int32 id);
 };

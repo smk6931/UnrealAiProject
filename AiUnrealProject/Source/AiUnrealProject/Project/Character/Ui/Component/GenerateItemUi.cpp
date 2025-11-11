@@ -35,13 +35,12 @@ void UGenerateItemUi::OnCreateItemClick()
 		FItemRows Rows;
 		FJsonObjectConverter::JsonObjectStringToUStruct(String, &Rows);
 		UE_LOG(LogTemp,Warning,TEXT("람다안으로 아이템 생성 넘어옴 %s"), *Rows.response[0].Name);
-		
 		MonsterName->SetText(FText::FromString(String));
 		
 		UTextBlock* Text = NewObject<UTextBlock>();
 		Text->SetText(FText::FromString(String));
 		Text->SetAutoWrapText(true);
-		Text->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 12)));
+		Text->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 15)));
 		RightVerticalBox->AddChild(Text);
 	});
 	Api->GenerateItemsForMonsterIds(MonsterRows.response[0].id, 1, false);

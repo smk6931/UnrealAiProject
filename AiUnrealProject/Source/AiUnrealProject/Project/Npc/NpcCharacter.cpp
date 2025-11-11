@@ -62,7 +62,6 @@ void ANpcCharacter::OpenItem()
 		Inventory = CreateWidget<UInventory>(GetWorld(),InventoryFactory);
 		Inventory->AddToViewport();
 		UApiItemObject* Api = NewObject<UApiItemObject>();
-		Api->ParseItemInfo();
 		
 		/*Api->OnItemInfoResponse.BindWeakLambda(this,[this](FString String)
 		{
