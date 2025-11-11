@@ -40,6 +40,15 @@ public:
 	TArray<FWorldRow> Response;
 };
 
+USTRUCT(BlueprintType)
+struct FWorldByResponse
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
+	FString response = "InitResponse";
+};
+
 UCLASS()
 class AIUNREALPROJECT_API UApiWorldObject : public UObject
 {

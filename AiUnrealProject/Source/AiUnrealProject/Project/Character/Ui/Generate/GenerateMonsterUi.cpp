@@ -32,7 +32,6 @@ void UGenerateMonsterUi::NativeConstruct()
 
 void UGenerateMonsterUi::OnCreateClick()
 {
-	
 	UE_LOG(LogTemp, Display, TEXT("OnCreateClick 몬스터 생성 시작"));
 	Api->OnMonsterInfoResponse.BindLambda([this](FString String)
 	{
@@ -102,7 +101,7 @@ void UGenerateMonsterUi::OnCreateClick()
 		}
 		else{UE_LOG(LogTemp, Display, TEXT("OnMonsterInfoResponse Rows 안에 파싱 실패"));}
 	});
-	Api->CreateMonsterAi();
+	// Api->CreateMonsterAi();
 }
 
 void UGenerateMonsterUi::OnCloseClick()
@@ -139,6 +138,8 @@ void UGenerateMonsterUi::OnWorldClick()
 		FWorldRows Rows;
 		FJsonObjectConverter::JsonObjectStringToUStruct(String, &Rows);
 		WorldInfo->SetText(FText::FromString(FString::Printf(TEXT("[%s] 대륙의 몬스터를 생성"),*Rows.Response[0].title)));
+
+		OnCreateClick();
 		Api->GenerateMonster(String);
 	});
 	ApiWorld->GetRandomWorld();

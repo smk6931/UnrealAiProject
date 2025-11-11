@@ -11,16 +11,19 @@ from service.monster.monster_image_generate import generate_monster_image
 
 router = APIRouter()
 
+
 class MonsterIds(BaseModel):
    monster_ids: List[int]
+
 
 @router.get("/monster")
 def get_monster_all():
   response = select_monsters_all()
   return {"response": response}
 
+
 @router.post("/monster/image/generate")
-def generate_monster_img(data:MonsterIds):
+def generate_monster_img(data: MonsterIds):
   url = generate_monster_image(data.monster_ids)
   return {"response": "이미지 생성 완료", "ids": data.monster_ids}, {"url", url}
 
@@ -29,11 +32,19 @@ def generate_monster_img(data:MonsterIds):
 #   response = get_random_world_story()
 #   return {"response": response}
 
+
 @router.post("/monster/generate")
-def get_generate_monster_world(world : str = Body(...)):
+def get_generate_monster_world(data: dict = Body(...)):
+  if "response" in data:
+    data["world"] = data.pop("response")
+
+    world = data["world"][0]
+    response = generate_monster_from_world(world)
+    return {"response": response}
+
   # world = json.loads(world)
-  response = generate_monster_from_world(world)
-  return {"response" : response}
+  # response = generate_monster_from_world(world)
+  # return {"response" : response}
 
 @router.post("/monster/get/monster_ids")
 def get_monsters(data:MonsterIds):
