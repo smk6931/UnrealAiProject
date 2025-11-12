@@ -6,12 +6,12 @@ import psycopg2.extras
 sys.path.append(os.path.abspath(
     os.path.join(os.path.dirname(__file__), '../../')))
 
-def get_random_world_story():
+def get_random_worlds():
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
         SELECT id, title, content, metadata
-        FROM world_story
+        FROM worlds
         ORDER BY RANDOM()
         LIMIT 1;
     """)
@@ -21,3 +21,16 @@ def get_random_world_story():
 
     print(f"선택된 월드{world["title"]}")
     return [dict(world)]
+
+def select_worlds_all():
+    conn, cur = get_cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur.execute("""
+        select (id, title, content, metadata
+        from worlds
+    """)
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return [dict(row for row in rows)]

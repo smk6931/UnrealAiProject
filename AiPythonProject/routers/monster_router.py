@@ -29,7 +29,7 @@ def generate_monster_img(data: MonsterIds):
 
 # @router.post("/monster/generate")
 # def get_generate_monster_fullinfo():
-#   response = get_random_world_story()
+#   response = get_random_worlds()
 #   return {"response": response}
 
 

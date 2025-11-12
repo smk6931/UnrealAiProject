@@ -27,7 +27,6 @@ def add_monster_columns():
     cur.close()
     conn.close()
 
-
 def select_monsters_all():
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)

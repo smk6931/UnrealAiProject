@@ -13,12 +13,12 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-# def get_random_world_story(bimage : bool= False):
+# def get_random_worlds(bimage : bool= False):
 #     conn, cur = get_cursor()
 #     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 #     cur.execute("""
 #         SELECT id, title, content, metadata
-#         FROM world_story
+#         FROM v
 #         ORDER BY RANDOM()
 #         LIMIT 1;
 #     """)

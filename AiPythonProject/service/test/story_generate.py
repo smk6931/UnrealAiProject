@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 client = OpenAI()
 
 
-def generate_world_story(quest_mood="초보"):
+def generate_worlds(quest_mood="초보"):
 
     conn, cur = get_cursor()
     cur.close()
@@ -17,7 +17,7 @@ def generate_world_story(quest_mood="초보"):
 
     cur.execute("""
         select title, content, metadata
-                from world_story
+                from worlds
                 order by id desc
                 limit 1
         """)
@@ -82,7 +82,7 @@ def generate_world_story(quest_mood="초보"):
     print("json변환 ", world_json)
 
     cur.execute("""
-            insert into world_story (title, content, metadata, embedding)
+            insert into worlds (title, content, metadata, embedding)
             values (%s, %s, %s, %s)
             """, (title, content, json.dumps(metadata), embedding))
     conn.commit()

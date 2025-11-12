@@ -8,7 +8,7 @@
 # from database.Item.Item_generate_monster import generate_items_for_monster
 # from database.Item.item_image_generate import generate_item_image
 # from database.monster.monster_createtable import select_monsters_all
-# from database.monster.monster_generate import get_random_world_story
+# from database.monster.monster_generate import get_random_worlds
 # from database.monster.monster_image_generate import generate_monster_image
 # from database.npc.npm_chat import npc_chat_response
 # from db_config import get_cursor
@@ -85,7 +85,7 @@
 
 # @app.post("/monster/generate")
 # def get_generate_monster_fullinfo():
-#   response = get_random_world_story()
+#   response = get_random_worlds()
 #   return {"response": response}
 
 # @app.get("/monster/image/{monster_id}")

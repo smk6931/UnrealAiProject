@@ -16,7 +16,7 @@ def summarize_previous_world():
 
     cur.execute("""
         SELECT title, content, metadata
-        FROM world_story
+        FROM worlds
         ORDER BY id DESC
         LIMIT 1;
     """)
@@ -45,7 +45,7 @@ def summarize_previous_world():
     return summary_response.choices[0].message.content.strip()
 
 
-def generate_next_world_story(quest_mood="중급"):
+def generate_next_worlds(quest_mood="중급"):
     """이전 세계관의 테마만 은유적으로 계승하며, 완전히 새 시즌의 세계관 생성"""
     previous_summary = summarize_previous_world()
 
@@ -128,7 +128,7 @@ RPG 첫 시즌으로 완전히 새로운 세계를 만들어라.
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
-        INSERT INTO world_story (title, content, metadata, embedding)
+        INSERT INTO worlds (title, content, metadata, embedding)
         VALUES (%s, %s, %s, %s)
     """, (title, content, json.dumps(metadata), embedding))
     conn.commit()
@@ -139,4 +139,4 @@ RPG 첫 시즌으로 완전히 새로운 세계를 만들어라.
 
 
 if __name__ == "__main__":
-    generate_next_world_story(quest_mood="고급")
+    generate_next_worlds(quest_mood="고급")

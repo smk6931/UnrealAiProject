@@ -23,7 +23,7 @@ def get_similar_world_stories(question, top_n=1):
     cur.execute("""
         SELECT id, title, content, metadata,
                -(embedding <#> %s::vector) AS similarity
-        FROM world_story
+        FROM worlds
         ORDER BY embedding <#> %s::vector
         LIMIT %s;
     """, (question_embedding, question_embedding, top_n))

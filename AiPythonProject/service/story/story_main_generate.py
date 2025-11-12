@@ -11,7 +11,7 @@ import json
 
 client = OpenAI()
 
-def generate_world_story(continent, quest_mood="초보"):
+def generate_worlds(continent, quest_mood="초보"):
     response = client.chat.completions.create(
         model="gpt-5-mini",
         messages=[
@@ -56,7 +56,7 @@ def generate_world_story(continent, quest_mood="초보"):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("""
-        INSERT INTO world_story (title, content, metadata, 
+        INSERT INTO worlds (title, content, metadata, 
                 embedding) VALUES (%s, %s, %s, %s)
     """, (title, content, json.dumps(metadata), embedding))
     conn.commit()
@@ -73,9 +73,9 @@ continents = [
     "에테르 천공섬"   # 하늘 대륙
 ]
 
-generate_world_story(
+generate_worlds(
     "아이솔드 해협", quest_mood="초보")
 
 # for c in continents:
-#     generate_world_story(continent=c, quest_mood="초보")
+#     generate_worlds(continent=c, quest_mood="초보")
 

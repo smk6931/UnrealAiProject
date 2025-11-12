@@ -14,7 +14,7 @@ def create_items_table():
     cur.execute("""
     CREATE TABLE IF NOT EXISTS items (
         id SERIAL PRIMARY KEY,
-        world_id INT REFERENCES world_story(id) ON DELETE SET NULL,
+        world_id INT REFERENCES worlds(id) ON DELETE SET NULL,
         monster_id INT REFERENCES monsters(id) ON DELETE SET NULL,
         name VARCHAR(100) NOT NULL,
         rarity VARCHAR(50),
