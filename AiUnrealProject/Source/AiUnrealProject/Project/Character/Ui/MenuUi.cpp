@@ -24,22 +24,24 @@ void UMenuUi::NativeConstruct()
 	Button_Create->OnClicked.AddDynamic(this,&UMenuUi::OnCreateClick);
 	Button_World->OnClicked.AddDynamic(this,&UMenuUi::OnWorldClick);
 	
-	BpItemInfoUi->SetVisibility(ESlateVisibility::Hidden);
-	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Hidden);
-	BpWorldInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	BpItemInfoUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpWorldInfoUi->SetVisibility(ESlateVisibility::Collapsed);
 	
-	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Hidden);
+	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpGenerateItemUi->SetVisibility(ESlateVisibility::Collapsed);
+	
 }
 
 void UMenuUi::OnCloseClick()
 {
 	UE_LOG(LogTemp, Display, TEXT("ButtonCloseClick"));
-	BpItemInfoUi->SetVisibility(ESlateVisibility::Hidden);
-	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Hidden);
-	BpWorldInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	BpItemInfoUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpWorldInfoUi->SetVisibility(ESlateVisibility::Collapsed);
 	
-	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Hidden);
-	BpGenerateItemUi->SetVisibility(ESlateVisibility::Hidden);
+	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpGenerateItemUi->SetVisibility(ESlateVisibility::Collapsed);
 	Board->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -48,7 +50,7 @@ void UMenuUi::OnCreateClick()
 	UE_LOG(LogTemp, Display, TEXT("ButtonCreateClick"));
 	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Visible);
 	BpGenerateItemUi->SetVisibility(ESlateVisibility::Collapsed);
-	Board->SetVisibility(ESlateVisibility::Hidden);
+	Board->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UMenuUi::OnMonsterClick()
@@ -56,7 +58,7 @@ void UMenuUi::OnMonsterClick()
 	UE_LOG(LogTemp, Display, TEXT("ButtonMonsterClick"));
 	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Visible);
 	BpMonsterInfoUi->LoadMonsters();
-	Board->SetVisibility(ESlateVisibility::Hidden);
+	Board->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UMenuUi::OnWorldClick()
@@ -64,7 +66,7 @@ void UMenuUi::OnWorldClick()
 	UE_LOG(LogTemp, Display, TEXT("ButtonMonsterClick"));
 	BpWorldInfoUi->SetVisibility(ESlateVisibility::Visible);
 	BpWorldInfoUi->LoadWorlds();
-	Board->SetVisibility(ESlateVisibility::Hidden);
+	Board->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UMenuUi::OnItemClick()
@@ -72,7 +74,7 @@ void UMenuUi::OnItemClick()
 	UE_LOG(LogTemp, Display, TEXT("ButtonItemClick"));
 	BpItemInfoUi->SetVisibility(ESlateVisibility::Visible);
 	BpItemInfoUi->LoadItems();
-	Board->SetVisibility(ESlateVisibility::Hidden);
+	Board->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 

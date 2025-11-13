@@ -19,6 +19,9 @@ class AIUNREALPROJECT_API UWorldInfoUi : public UUserWidget
 public:
 	UPROPERTY(EditAnywhere)
 	class UMenuUi* MenuUi;
+
+	UPROPERTY(EditAnywhere)
+	FWorldRow WorldRow;
 	
 	UPROPERTY(EditAnywhere)
 	FWorldRows WorldRows;

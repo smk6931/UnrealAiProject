@@ -31,7 +31,7 @@ public:
 	class UGenerateItemUi* BpGenerateItemUi;
 
 	UPROPERTY(meta = (BindWidget))
-	class UHorizontalBox* GenerateBox;
+	class UHorizontalBox* BoardBox;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Close;

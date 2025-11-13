@@ -20,6 +20,8 @@ public:
 	UPROPERTY(EditAnywhere)
 	FMonsterRows MonsterRows;
 
+	UPROPERTY(EditAnywhere)
+	FString JsonString;
 	
 	UPROPERTY()
 	class UApiMonsterObject* Api;

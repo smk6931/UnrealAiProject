@@ -32,7 +32,7 @@ void UWorldInfoUi::NativeConstruct()
 
 void UWorldInfoUi::LoadWorlds()
 {
-	// VScroll->ClearChildren();
+	VScroll->ClearChildren();
 	// ButtonWorldMap.Empty();
 	
 	Api->OnWorldInfoResponse.BindWeakLambda(this,[this](FString String)
@@ -76,6 +76,7 @@ void UWorldInfoUi::OnDetailClick()
 		UButton* Button = Map.Key;
 		if (Button->HasKeyboardFocus())
 		{
+			WorldRow = Map.Value;
 			UTextBlock* GenerateTitle = Cast<UTextBlock>(Button_GenerateMonster->GetChildAt(0));
 			GenerateTitle->SetText(FText::FromString(FString::Printf(TEXT("%s 몬스터 생성"),*Map.Value.title)));
 			
@@ -99,10 +100,24 @@ void UWorldInfoUi::OnDetailClick()
 
 void UWorldInfoUi::OnGenerateMonsterClick()
 {
+	// RightBoard->SetVisibility(ESlateVisibility::Collapsed);
 	UE_LOG(LogTemp, Display, TEXT("OnGenerateMonsterClick"));
-	RightBoard->SetVisibility(ESlateVisibility::Collapsed);
+	SetVisibility(ESlateVisibility::Collapsed);
 	MenuUi->BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Visible);
+	MenuUi->BpGenerateMonsterUi->WorldInfo->SetText(FText::FromString(FString::Printf(TEXT("[%s] 몬스터 생성중"),*WorldRow.title)));
+
+	UApiMonsterObject* ApiMonster = NewObject<UApiMonsterObject>(this);
+
+	FWorldRows Rows;
+	Rows.Response.Add(WorldRow);
 	
+	FString String;
+	FJsonObjectConverter::UStructToJsonObjectString(Rows, String);
+	UE_LOG(LogTemp, Display, TEXT("OnGenerateMonsterClick 보내는 WorldJson %s"), *String);
+
+	MenuUi->BpGenerateMonsterUi->JsonString = String;
+	// MenuUi->BpGenerateMonsterUi->OnCreateClick();
+	ApiMonster->GenerateMonster(String);
 }
 
 
