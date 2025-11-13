@@ -59,4 +59,6 @@ public:
 	
 	void GetRandomWorld();
 	void GetWorldsAll();
+
+	void GenerateWorldPipeline(FString Prompt);
 };

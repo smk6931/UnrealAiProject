@@ -4,7 +4,10 @@
 #include "GenerateWorldUi.h"
 
 #include "GenerateMonsterUi.h"
+#include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
+#include "Components/TextBlock.h"
+#include "Components/VerticalBox.h"
 
 void UGenerateWorldUi::NativeConstruct()
 {
@@ -45,6 +48,14 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
+		UTextBlock* ResponseWorld = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
+		ResponseWorld->SetFont(FCoreStyle::GetDefaultFontStyle("Regular", 16));
+		Api->OnWorldInfoResponse.BindLambda([this,ResponseWorld](FString String)
+		{
+			ResponseWorld->SetText(FText::FromString(String));
+			this->RightVerticalBox->AddChild(ResponseWorld);
+		});
 		UE_LOG(LogTemp, Display, TEXT("OnInputQuestion %s"), *Text.ToString());
+		Api->GenerateWorldPipeline(Text.ToString());
 	}
 }

@@ -4,6 +4,7 @@
 #include "ApiWorldObject.h"
 
 #include "ApiMonsterObject.h"
+#include "ApiNpcObject.h"
 #include "HttpModule.h"
 #include "JsonObjectConverter.h"
 #include "Interfaces/IHttpRequest.h"
@@ -55,4 +56,29 @@ void UApiWorldObject::GetWorldsAll()
 		}
 	});
 	Request->ProcessRequest();
+}
+
+void UApiWorldObject::GenerateWorldPipeline(FString Prompt)
+{
+	FNpcChatPost Request;
+	Request.question = Prompt;
+
+	FString JsonString;
+	FJsonObjectConverter::UStructToJsonObjectString(Request, JsonString);
+
+	FHttpRequestRef Req = FHttpModule::Get().CreateRequest();
+	Req->SetURL(TEXT("http://127.0.0.1:8000/world/generate"));
+	Req->SetVerb(TEXT("POST"));
+	Req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Req->SetContentAsString(JsonString);
+
+	Req->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	{
+		if (bSuccess && Res.IsValid())
+		{
+			UE_LOG(LogTemp,Warning,TEXT("GenerateWorldPipeline 세계관 %s"),*Res->GetContentAsString())
+			OnWorldInfoResponse.ExecuteIfBound(Res->GetContentAsString());
+		}
+	});
+	Req->ProcessRequest();
 }

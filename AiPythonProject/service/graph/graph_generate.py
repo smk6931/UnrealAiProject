@@ -2,9 +2,7 @@
 
 from openai import OpenAI
 
-
 client = OpenAI()
-
 
 def generate_graph_nodes(world_text: str):
     prompt = f"""
@@ -15,6 +13,10 @@ def generate_graph_nodes(world_text: str):
     - 주요 몬스터 3개
     - 핵심 아이템 3개
       를 추출하여, 각 노드를 JSON 배열로 만들어라.
+
+      세계관 텍스트
+      {world_text}
+      
       각 노드:
     {{
     "node_type": "region | faction | race | monster | item",
