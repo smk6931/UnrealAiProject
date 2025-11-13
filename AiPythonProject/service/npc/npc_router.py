@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from models.schemas import PlayerQuestion
-from service.npc.npm_chat import npc_chat_response
+from service.npc.npc_chat import npc_chat_response
 
 router = APIRouter()
 

@@ -5,7 +5,10 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from db_config import get_cursor
-from routers import item_router, monster_router, npc_router, world_router
+from service.story import world_router
+from service.Item import item_router
+from service.monster import monster_router
+from service.npc import npc_router
 
 app = FastAPI()
 
