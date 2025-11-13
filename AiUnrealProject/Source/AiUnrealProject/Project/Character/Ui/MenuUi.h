@@ -15,6 +15,8 @@ class AIUNREALPROJECT_API UMenuUi : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
+	
 	UPROPERTY(meta = (BindWidget))
 	class UItemInfoUi* BpItemInfoUi;
 
@@ -31,6 +33,9 @@ public:
 	class UGenerateItemUi* BpGenerateItemUi;
 
 	UPROPERTY(meta = (BindWidget))
+	class UGenerateWorldUi* BpGenerateWorldUi;
+
+	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* BoardBox;
 
 	UPROPERTY(meta = (BindWidget))
@@ -38,6 +43,9 @@ public:
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Create;
+
+    UPROPERTY(meta = (BindWidget))
+	class UButton* Button_CreateWorld;
 	
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_Monster;
@@ -69,5 +77,6 @@ public:
 
 	void ButtonCLose();
 
-	virtual void NativeConstruct() override;
+	UFUNCTION()
+	void OnCreateWorldClick();
 };

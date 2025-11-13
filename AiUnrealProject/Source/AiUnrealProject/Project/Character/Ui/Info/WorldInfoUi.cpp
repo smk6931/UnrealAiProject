@@ -28,6 +28,7 @@ void UWorldInfoUi::NativeConstruct()
 	Api = NewObject<UApiWorldObject>(this);
 
 	Button_GenerateMonster->OnClicked.AddDynamic(this,&UWorldInfoUi::OnGenerateMonsterClick);
+	RightBoard->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 void UWorldInfoUi::LoadWorlds()
@@ -105,9 +106,7 @@ void UWorldInfoUi::OnGenerateMonsterClick()
 	SetVisibility(ESlateVisibility::Collapsed);
 	MenuUi->BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Visible);
 	MenuUi->BpGenerateMonsterUi->WorldInfo->SetText(FText::FromString(FString::Printf(TEXT("[%s] 몬스터 생성중"),*WorldRow.title)));
-
-	UApiMonsterObject* ApiMonster = NewObject<UApiMonsterObject>(this);
-
+	
 	FWorldRows Rows;
 	Rows.Response.Add(WorldRow);
 	
@@ -116,8 +115,10 @@ void UWorldInfoUi::OnGenerateMonsterClick()
 	UE_LOG(LogTemp, Display, TEXT("OnGenerateMonsterClick 보내는 WorldJson %s"), *String);
 
 	MenuUi->BpGenerateMonsterUi->JsonString = String;
+
+	// UApiMonsterObject* ApiMonster = NewObject<UApiMonsterObject>(this);
 	// MenuUi->BpGenerateMonsterUi->OnCreateClick();
-	ApiMonster->GenerateMonster(String);
+	// ApiMonster->GenerateMonster(String);
 }
 
 

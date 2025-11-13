@@ -8,6 +8,7 @@
 #include "Generate/GenerateMonsterUi.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
+#include "Generate/GenerateWorldUi.h"
 #include "Info/WorldInfoUi.h"
 
 void UMenuUi::NativeConstruct()
@@ -23,6 +24,7 @@ void UMenuUi::NativeConstruct()
 	Button_Monster->OnClicked.AddDynamic(this,&UMenuUi::OnMonsterClick);
 	Button_Create->OnClicked.AddDynamic(this,&UMenuUi::OnCreateClick);
 	Button_World->OnClicked.AddDynamic(this,&UMenuUi::OnWorldClick);
+	Button_CreateWorld->OnClicked.AddDynamic(this,&UMenuUi::OnCreateWorldClick);
 	
 	BpItemInfoUi->SetVisibility(ESlateVisibility::Collapsed);
 	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Collapsed);
@@ -30,6 +32,7 @@ void UMenuUi::NativeConstruct()
 	
 	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Collapsed);
 	BpGenerateItemUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpGenerateWorldUi->SetVisibility(ESlateVisibility::Collapsed);
 	
 }
 
@@ -42,6 +45,7 @@ void UMenuUi::OnCloseClick()
 	
 	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Collapsed);
 	BpGenerateItemUi->SetVisibility(ESlateVisibility::Collapsed);
+	BpGenerateWorldUi->SetVisibility(ESlateVisibility::Collapsed);
 	Board->SetVisibility(ESlateVisibility::Visible);
 }
 
@@ -82,6 +86,12 @@ void UMenuUi::ButtonCLose()
 {
 	Button_Close->SetVisibility(ESlateVisibility::Collapsed);
 	Button_Create->SetVisibility(ESlateVisibility::Collapsed);
+}
+
+void UMenuUi::OnCreateWorldClick()
+{
+	UGenerateWorldUi* Ui = BpGenerateWorldUi;
+	Ui->SetVisibility(Ui->GetVisibility() == ESlateVisibility::Visible? ESlateVisibility::Collapsed: ESlateVisibility::Visible);
 }
 
 

@@ -177,12 +177,10 @@ void UApiMonsterObject::GenerateMonster(FString String)
 		{
 			UE_LOG(LogTemp,Warning,TEXT("GenerateMonster 파싱 실패 Json : %s"), *Res->GetContentAsString()) return;
 		}
-		
 		UE_LOG(LogTemp, Display, TEXT("Monster 생성 Execute Delegate : %s \n 몬스터 id는 %d \n 첫행 이름 %s"),*Res->GetContentAsString(), Rows.response[0].id, *Rows.response[0].Name);
 		WeakThis->OnMonsterInfoResponse.ExecuteIfBound(Res->GetContentAsString());
 	});
 	HttpRequest->ProcessRequest();
-	
 }
 
 
