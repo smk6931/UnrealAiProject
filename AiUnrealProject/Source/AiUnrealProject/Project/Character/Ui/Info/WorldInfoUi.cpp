@@ -7,6 +7,7 @@
 #include "IPropertyTable.h"
 #include "JsonObjectConverter.h"
 #include "MonsterInfoUi.h"
+#include "ToolMenusEditor.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
@@ -100,8 +101,8 @@ void UWorldInfoUi::OnGenerateMonsterClick()
 {
 	UE_LOG(LogTemp, Display, TEXT("OnGenerateMonsterClick"));
 	RightBoard->SetVisibility(ESlateVisibility::Collapsed);
+	MenuUi->BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Visible);
 	
-	// MenuUi->BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Visible);
 }
 
 
