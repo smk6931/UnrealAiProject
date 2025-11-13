@@ -41,6 +41,12 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_GenerateMonster;
 
+	UPROPERTY(meta = (BindWidget))
+	class UBorder* RightBoard;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UBorder* LeftBoard;
+
 	virtual void NativeConstruct() override;
 
 	void LoadWorlds();
