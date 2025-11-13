@@ -8,12 +8,15 @@
 #include "Generate/GenerateMonsterUi.h"
 #include "Components/Border.h"
 #include "Components/Button.h"
+#include "Info/WorldInfoUi.h"
 
 void UMenuUi::NativeConstruct()
 {
 	Super::NativeConstruct();
 	BpGenerateMonsterUi->MenuUi = this;
 	BpGenerateItemUi->MenuUi = this;
+	
+    BpWorldInfoUi->MenuUi = this;
 	
 	Button_Close->OnClicked.AddDynamic(this,&UMenuUi::OnCloseClick);
 	Button_Item->OnClicked.AddDynamic(this,&UMenuUi::OnItemClick);
@@ -23,8 +26,9 @@ void UMenuUi::NativeConstruct()
 	
 	BpItemInfoUi->SetVisibility(ESlateVisibility::Hidden);
 	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	BpWorldInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	
 	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Hidden);
-	BpGenerateItemUi->SetVisibility(ESlateVisibility::Hidden);
 }
 
 void UMenuUi::OnCloseClick()
@@ -32,6 +36,8 @@ void UMenuUi::OnCloseClick()
 	UE_LOG(LogTemp, Display, TEXT("ButtonCloseClick"));
 	BpItemInfoUi->SetVisibility(ESlateVisibility::Hidden);
 	BpMonsterInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	BpWorldInfoUi->SetVisibility(ESlateVisibility::Hidden);
+	
 	BpGenerateMonsterUi->SetVisibility(ESlateVisibility::Hidden);
 	BpGenerateItemUi->SetVisibility(ESlateVisibility::Hidden);
 	Board->SetVisibility(ESlateVisibility::Visible);
@@ -56,8 +62,8 @@ void UMenuUi::OnMonsterClick()
 void UMenuUi::OnWorldClick()
 {
 	UE_LOG(LogTemp, Display, TEXT("ButtonMonsterClick"));
-	// BpMonsterInfoUi->SetVisibility(ESlateVisibility::Visible);
-	// BpMonsterInfoUi->LoadMonsters();
+	BpWorldInfoUi->SetVisibility(ESlateVisibility::Visible);
+	BpWorldInfoUi->LoadWorlds();
 	Board->SetVisibility(ESlateVisibility::Hidden);
 }
 

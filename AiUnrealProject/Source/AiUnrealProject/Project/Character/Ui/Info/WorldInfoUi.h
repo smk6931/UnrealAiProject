@@ -17,20 +17,39 @@ class AIUNREALPROJECT_API UWorldInfoUi : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere)
+	class UMenuUi* MenuUi;
+	
+	UPROPERTY(EditAnywhere)
+	FWorldRows WorldRows;
 	
 	UPROPERTY(meta = (BindWidget))
 	class UVerticalBox* DetailPanel;
 
+	UPROPERTY(EditAnywhere)
+	class UApiWorldObject* Api;
+
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* VScroll;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UTextBlock* WorldTitle;
+	
+	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_Detail;
+
+	UPROPERTY(meta = (BindWidget))
+	class UButton* Button_GenerateMonster;
 
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
-	void LoadMonsters();
+	void LoadWorlds();
 
 	UFUNCTION()
-	void OnMonsterClicked();
+	void OnDetailClick();
+
+	UFUNCTION()
+	void OnGenerateMonsterClick();
 
 	UPROPERTY(EditAnywhere)
 	TMap<UButton*, FWorldRow> ButtonWorldMap;

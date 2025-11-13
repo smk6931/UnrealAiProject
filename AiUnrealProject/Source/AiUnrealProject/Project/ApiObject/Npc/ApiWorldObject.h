@@ -58,4 +58,5 @@ public:
 	FOnWorldInfoResponse OnWorldInfoResponse;
 	
 	void GetRandomWorld();
+	void GetWorldsAll();
 };

@@ -22,6 +22,9 @@ public:
 	class UMonsterInfoUi* BpMonsterInfoUi;
 
 	UPROPERTY(meta = (BindWidget))
+	class UWorldInfoUi* BpWorldInfoUi;
+
+	UPROPERTY(meta = (BindWidget))
 	class UGenerateMonsterUi* BpGenerateMonsterUi;
 
 	UPROPERTY(meta = (BindWidget))
