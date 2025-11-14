@@ -94,7 +94,7 @@ void UApiWorldObject::GenerateWorldPipeline(FString Prompt)
 }
 
 
-void UApiWorldObject::GenerateNewxWorld(FString Prompt)
+void UApiWorldObject::GenerateNextWorld(FString Prompt)
 {
 	UE_LOG(LogTemp,Warning,TEXT("GenerateNewxWorld"));
 	FNpcChatPost Request;

@@ -11,6 +11,29 @@ sys.path.append(os.path.abspath(
 
 client = OpenAI()
 
+def summurize_similarity_reason(question, world):
+    print("summurize_similarity_reason 시작")
+
+    reason_prompt = f"""
+    너에게 사용자가 입력한 세계관 질문과 유사도 검색으로 찾은 결과가 있다.
+    아래 두 내용을 비교하고, 왜 유사하다고 판단했는지 핵심 근거를 3줄로 요약해라.
+    문장 길이는 매우 짧게.
+
+    [사용자 질문]
+    {question}
+
+    [찾아온 세계관]
+    제목: {world['title']}
+    내용: {world['content']}
+    메타데이터: {json.dumps(world['metadata'], ensure_ascii=False)}
+    """
+
+    res = client.chat.completions.create(
+        model="gpt-5-mini",
+        messages=[{"role": "user", "content": reason_prompt}]
+    )
+    return res.choices[0].message.content.strip()
+
 def summarize_previous_world(question: str):
     print("summarize_previous_world 실행")
 
@@ -36,35 +59,53 @@ def summarize_previous_world(question: str):
 
     worlds = []
     for row in rows:
+        reason = summurize_similarity_reason(question, row)
         worlds.append({
             "title": row["title"],
             "content": row["content"],
             "metadata": row["metadata"],
-            "similarity": row["similarity"]
+            "similarity": row["similarity"],
+            "similar_reason" : reason
         })
 
         print(
+            "summurize_similarity_reason 요약된 세게관들"
             "summarize_previous_world",
             "title", row["title"], "\n",
             "content", row["content"], "\n",
             "metadata", row["metadata"], "\n",
-            "similarity", row["similarity"], "\n"
+            "similarity", row["similarity"], "\n",
+            "similar_reason", reason
         )
     return worlds
 
 
 def generate_next_worlds(question, quest_mood="중급"):
-    print("generate_next_worlds 김치짬뽕")
+    print("generate_next_worlds")
 
     worlds = summarize_previous_world(question)
 
     # worlds가 비어 있으면 None
-    previous_summary = json.dumps(worlds, ensure_ascii=False, indent=2) if worlds else None
+    previous_summary = json.dumps(
+        worlds, ensure_ascii=False, indent=2) if worlds else None
 
     if previous_summary:
         prompt = f"""
-    이전 시즌 세계관의 요약:
+    다음 정보 두 가지를 기반으로 새로운 시즌 세계관을 창작하라.
+
+    ====================================================
+    1) 🧩 사용자가 원하는 세계관 질문 (창작 의도)
+    ----------------------------------------------------
+    {question}
+
+    2) 📚 이전 시즌 세계관 (유사도 기반 참고용)
+    ----------------------------------------------------
     {previous_summary}
+
+    ※ 주의:
+    - 이전 시즌 세계의 요소(인물, 도시, 세력, 사건)는 재사용 금지
+    - 다만 '정서적 여운(테마, 분위기, 철학)'은 은유적·신화적 형태로만 계승 가능
+    ====================================================
 
     🎯 목표:
     이전 세계의 사건과 인물은 완전히 사라졌다.
@@ -91,11 +132,14 @@ def generate_next_worlds(question, quest_mood="중급"):
         "main_factions": ["새로운 세력1", "새로운 세력2"],
         "themes": ["새로운 세계의 주제1", "주제2", "주제3"],
         "keywords": ["이전 세계에서 유산된 단어1", "새로운 단어2", "새로운 단어3"]
+      }}
     }}
-    }}
+    ⚠️ 절대 금지:
+    - 설명적 문장 출력 금지
+    - JSON 외의 텍스트, 앞뒤 주석, 코드블록(````json`) 금지
     """
     else:
-            prompt = f"""
+        prompt = f"""
     이전 세계관이 존재하지 않는다.
     RPG 첫 시즌으로 완전히 새로운 세계를 만들어라.
     세계의 대륙, 주요 세력, 갈등, 문명 구조, 기술 체계를 포함하라.
@@ -111,7 +155,7 @@ def generate_next_worlds(question, quest_mood="중급"):
         "main_factions": ["세력1", "세력2"],
         "themes": ["세계 주제1", "주제2", "주제3"],
         "keywords": ["키워드1", "키워드2", "키워드3"]
-    }}
+      }}
     }}
     """
     # --- GPT 호출 ---
@@ -122,7 +166,6 @@ def generate_next_worlds(question, quest_mood="중급"):
             {"role": "user", "content": prompt}
         ]
     )
-
     world = json.loads(response.choices[0].message.content)
 
     # --- 임베딩 ---
@@ -150,8 +193,24 @@ def generate_next_worlds(question, quest_mood="중급"):
 
     print(f"새 시즌 세계관 생성 완료: {world['title']}")
 
-    return [{
-        "title": world["title"],
-        "content": world["content"],
-        "metadata": json.dumps(world["metadata"], ensure_ascii=False)
-    }]
+    world_similar = [
+        {"title": row["title"],
+         "similarity": row["similarity"],
+         "similar_reason": row["similar_reason"]
+        }
+        for row in worlds
+    ]
+
+    world_original = [{"title": world["title"],
+                      "content": world["content"],
+                       "metadata": json.dumps(world["metadata"], ensure_ascii=False)}]
+    return [
+        world_similar,
+        world_original
+    ]
+
+    # return [{
+    #     "title": world["title"],
+    #     "content": world["content"],
+    #     "metadata": json.dumps(world["metadata"], ensure_ascii=False)
+    # }]

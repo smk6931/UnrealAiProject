@@ -25,4 +25,8 @@ def generate_world_api(data: dict = Body(...)):
 def generate_next_world(data: dict = Body(...)):
   question = data["question"]
   response = generate_next_worlds(question)
-  return{"response" : response}
+  print("response[0] world_similar", response[0])
+  print("response[1] world_original", response[1])
+
+  return{ "response_embed" : response[0],
+          "response" : response[1]}

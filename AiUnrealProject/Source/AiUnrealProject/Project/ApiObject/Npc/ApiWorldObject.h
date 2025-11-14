@@ -20,15 +20,17 @@ struct FWorldRow
 public:
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
 	int32 id = 0;
-
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
 	FString title = "InitTitle";
-
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
 	FString content = "InitContent";
-
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
 	FString metadata = "InitMetadata";
+
+	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
+	float similarity = 0.0f;
+	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
+	FString similar_reason = "InitSimilarReason";
 };
 
 USTRUCT(BlueprintType)
@@ -41,12 +43,15 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FWorldByResponse
+struct FWorldRowsWithEmbed
 {
 	GENERATED_BODY()
 public:
 	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
-	FString response = "InitResponse";
+	TArray<FWorldRow> Response_Embed;
+	
+	UPROPERTY(BlueprintReadWrite, Category="WorldStory")
+	TArray<FWorldRow> Response;
 };
 
 UCLASS()
@@ -61,5 +66,5 @@ public:
 	void GetWorldsAll();
 
 	void GenerateWorldPipeline(FString Prompt);
-	void GenerateNewxWorld(FString Prompt);
+	void GenerateNextWorld(FString Prompt);
 };
