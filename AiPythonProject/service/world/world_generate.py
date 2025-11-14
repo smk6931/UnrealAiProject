@@ -2,6 +2,10 @@ import json
 from openai import OpenAI
 client = OpenAI()
 
+
+
+# RangChain 초기 실패작
+
 def polish_world(user_prompt: str):
 
     prompt = f"""
@@ -21,7 +25,6 @@ def polish_world(user_prompt: str):
     content = res.choices[0].message.content
     print("polish_world 시작 : " + content)
     return content
-
 
 def generate_new_world(polished, similar):
     s1 = similar[0]["content"] if len(similar) > 0 else ""

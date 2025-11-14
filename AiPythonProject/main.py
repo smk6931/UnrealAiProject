@@ -1,3 +1,4 @@
+import time
 from typing import List
 
 import psycopg2.extras
@@ -24,3 +25,7 @@ app.mount("/image", StaticFiles(directory="image"), name="image")
 @app.get("/")
 def root():
   return {"message": "AI-Unreal FastAPI Server Running"}
+
+# while True:
+#     print("🔥 VSCode 저장 감지 테스트 로그")
+#     time.sleep(1)

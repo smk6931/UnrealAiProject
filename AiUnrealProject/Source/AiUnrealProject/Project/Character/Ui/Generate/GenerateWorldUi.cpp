@@ -4,6 +4,7 @@
 #include "GenerateWorldUi.h"
 
 #include "GenerateMonsterUi.h"
+#include "JsonObjectConverter.h"
 #include "Blueprint/WidgetTree.h"
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
@@ -52,10 +53,28 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 		ResponseWorld->SetFont(FCoreStyle::GetDefaultFontStyle("Regular", 16));
 		Api->OnWorldInfoResponse.BindLambda([this,ResponseWorld](FString String)
 		{
+			FWorldRows Rows;
+			FJsonObjectConverter::JsonObjectStringToUStruct(String, &Rows);
+
+			UE_LOG(LogTemp, Warning, TEXT("OnInputQuestion 바인딩후 Response응답 %s"), *String);
+			
+			UTextBlock* Title = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
+			Title->SetText(FText::FromString(Rows.Response[0].title));
+			Title->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			
+			UTextBlock* Content = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
+			Content->SetText(FText::FromString(Rows.Response[0].content));
+			Content->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			Content->SetAutoWrapText(true);
+			
+			this->LeftVerticalBox->AddChild(Title);
+			this->LeftVerticalBox->AddChild(Content);
+			
 			ResponseWorld->SetText(FText::FromString(String));
 			this->RightVerticalBox->AddChild(ResponseWorld);
 		});
 		UE_LOG(LogTemp, Display, TEXT("OnInputQuestion %s"), *Text.ToString());
-		Api->GenerateWorldPipeline(Text.ToString());
+		// Api->GenerateWorldPipeline(Text.ToString());
+		Api->GenerateNewxWorld(Text.ToString());
 	}
 }

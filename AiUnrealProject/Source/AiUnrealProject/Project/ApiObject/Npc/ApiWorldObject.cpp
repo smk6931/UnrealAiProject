@@ -92,3 +92,51 @@ void UApiWorldObject::GenerateWorldPipeline(FString Prompt)
 	});
 	Req->ProcessRequest();
 }
+
+
+void UApiWorldObject::GenerateNewxWorld(FString Prompt)
+{
+	UE_LOG(LogTemp,Warning,TEXT("GenerateNewxWorld"));
+	FNpcChatPost Request;
+	Request.question = Prompt;
+
+	FString JsonString;
+	FJsonObjectConverter::UStructToJsonObjectString(Request, JsonString);
+
+	FHttpRequestRef Req = FHttpModule::Get().CreateRequest();
+	Req->SetURL(TEXT("http://127.0.0.1:8000/world/generate/bylaststroy"));
+	Req->SetVerb(TEXT("POST"));
+	Req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	Req->SetContentAsString(JsonString);
+	Req->SetTimeout(600.0f); 
+	
+	Req->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("GenerateNewxWorld Request요청 바인딩 Execute실행"));
+		if (!bSuccess)
+		{
+			UE_LOG(LogTemp, Error, TEXT("HTTP 요청 실패(bSuccess=false)"));
+			return;
+		}
+		// 2) 응답이 유효한지
+		if (!Res.IsValid())
+		{
+			UE_LOG(LogTemp, Error, TEXT("HTTP 응답이 NULL (Res.IsValid() == false)"));
+			return;
+		}
+		// 3) HTTP 코드 확인
+		int32 Code = Res->GetResponseCode();
+		if (Code < 200 || Code >= 300)
+		{
+			UE_LOG(LogTemp, Error, TEXT("HTTP Error Code: %d"), Code);
+			UE_LOG(LogTemp, Error, TEXT("Response: %s"), *Res->GetContentAsString());
+			return;
+		}
+		if (bSuccess && Res.IsValid())
+		{
+			UE_LOG(LogTemp,Warning,TEXT("GenerateNewxWorld 세계관 %s"),*Res->GetContentAsString())
+			OnWorldInfoResponse.ExecuteIfBound(Res->GetContentAsString());
+		}
+	});
+	Req->ProcessRequest();
+}

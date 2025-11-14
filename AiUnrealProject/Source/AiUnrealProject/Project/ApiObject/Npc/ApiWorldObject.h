@@ -61,4 +61,5 @@ public:
 	void GetWorldsAll();
 
 	void GenerateWorldPipeline(FString Prompt);
+	void GenerateNewxWorld(FString Prompt);
 };
