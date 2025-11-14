@@ -7,7 +7,6 @@ from db_config import get_cursor
 
 client = OpenAI()
 
-
 def generate_item_image(item_ids):
 
     if not item_ids:

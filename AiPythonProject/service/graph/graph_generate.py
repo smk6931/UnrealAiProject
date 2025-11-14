@@ -1,5 +1,4 @@
 
-
 from openai import OpenAI
 
 client = OpenAI()
@@ -29,11 +28,11 @@ def generate_graph_nodes(world_text: str):
         model="gpt-5-mini",
         messages=[
             {"role": "system", "content": "세계관 그래프 생성 전문가"},
-            {"rolr": "user", "content": prompt},
+            {"role": "user", "content": prompt},
         ]
     )
-    print("generate_graph_nodes 리턴값" + res.choices[0].message["content"])
+    print("generate_graph_nodes 리턴값" + res.choices[0].message.content)
 
-    return res.choices[0].message["content"]
+    return res.choices[0].message.content
 
 

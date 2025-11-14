@@ -10,7 +10,6 @@ import psycopg2.extras
 
 client = OpenAI()
 
-
 def get_similar_world_stories(question, top_n=1):
     question_embedding = client.embeddings.create(
         model="text-embedding-3-small",
@@ -38,7 +37,6 @@ def get_similar_world_stories(question, top_n=1):
     conn.close()
 
     return results
-
 
 def npc_chat_response(player_question):
 
@@ -75,7 +73,3 @@ def npc_chat_response(player_question):
     print("💬NPC 답변은??:",  npc_reply)
 
     return npc_reply
-
-
-if __name__ == "__main__":
-    npc_answer = npc_chat_response("에테르를 얻을 수 있는곳은?")

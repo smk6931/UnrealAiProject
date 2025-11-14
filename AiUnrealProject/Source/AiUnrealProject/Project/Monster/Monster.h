@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MonsterUi.h"
 #include "GameFramework/Character.h"
+#include "Project/ApiObject/Npc/ApiMonsterObject.h"
 #include "Monster.generated.h"
 
 UCLASS()
@@ -23,6 +25,17 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	FMonsterRow MonsterRow;
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(EditAnywhere)
+	class UWidgetComponent* MonsterUiComp;
+	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UMonsterUi> MonsterUiFactory;
+
+	UPROPERTY(EditAnywhere)
+	class UMonsterUi* MonsterUi;
 };

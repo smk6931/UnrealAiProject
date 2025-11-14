@@ -52,17 +52,16 @@ def select_worlds_all():
         result.append(row)
     return result
 
-
 #LangChain GoGo
 def search_similar_worlds(embedding):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     cur.execute("""
         select id, title, content, metadata
-        from world_story
-        order by embedding <#> %s
+        from worlds
+        order by embedding <#> %s::vector
         limit 3;
-    """ (embedding,))
+    """, (embedding,))
     rows = cur.fetchall()
     cur.close()
     conn.close()
@@ -74,8 +73,8 @@ def insert_world(title, content, metadata, embedding):
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("""
-        insert into world_story (title, content, metadat, embedding)
-        values (%s,%s,%s,%s)
+        insert into worlds (title, content, metadata, embedding)
+        values (%s,%s,%s,%s::vector)
         returning id
     """, (title, content, json.dumps(metadata), embedding))
     new_id = cur.fetchone()["id"]
@@ -85,7 +84,9 @@ def insert_world(title, content, metadata, embedding):
     return new_id
 
 def generate_world_pipeline(prompt: str):
-    polished = polish_world(prompt)
+    # polished = polish_world(prompt)
+
+    polished = prompt
     embedding = embed_text(polished)
     similar = search_similar_worlds(embedding)
     final_world = generate_new_world(polished, similar)
@@ -97,26 +98,41 @@ def generate_world_pipeline(prompt: str):
     }
 
     world_id = insert_world(
-        title = "AI 생성 세계관",
-        content=final_world,
+        title  =  final_world["title"],
+        content = final_world["content"],
         metadata = metadata,
         embedding = embedding
     )
 
-    graph_nodes = generate_graph_nodes(final_world)
-    graph_edges = link_graph_nodes(graph_nodes)
+    nodes = json.loads(generate_graph_nodes(final_world))
+    edges = json.loads(link_graph_nodes(nodes))
 
+    node_map = {}
     node_ids = []
-    for node in json.loads(graph_nodes):
-        node_ids.append(insert_graph_node(node, world_id))
-    
-    for edge in json.loads(graph_edges):
-        insert_graph_edge(edge, node_ids)
 
-    return {
+    for node in nodes:
+        node_id = insert_graph_node(node, world_id)
+        node_map[node["name"]] = node_id
+        node_ids.append(node_id)
+
+    print ("node_ids", node_ids)
+    
+    for edge in edges:
+        from_id = node_map[edge["from"]]
+        to_id = node_map[edge["to"]]
+
+        insert_graph_edge({
+            "from_id": from_id,
+            "to_id": to_id,
+            "relation": edge["relation"]
+        })
+
+    world = {
         "id" : world_id,
         "content": final_world,
         "similar": similar,
         "graph_nodes": node_ids
     }
-    
+
+    print ("generate_world_pipeline 최종 리턴 값은", world)
+    return world

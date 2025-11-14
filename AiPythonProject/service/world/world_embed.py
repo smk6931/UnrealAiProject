@@ -1,4 +1,6 @@
-from utils.openai_client import client
+from openai import OpenAI
+
+client = OpenAI()
 
 def embed_text(text: str):
   res = client.embeddings.create(

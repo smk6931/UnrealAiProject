@@ -9,6 +9,7 @@ from service.graph.graph_embed import embed_node
 
 def insert_graph_node(node, world_id):
     conn, cur = get_cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     emb = embed_node(node["description"])
     node["world_id"] = world_id
 
@@ -26,18 +27,15 @@ def insert_graph_node(node, world_id):
     conn.close()
     return new_id
 
-def insert_graph_edge(edge, node_ids):
+def insert_graph_edge(edge):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-    from_id = node_ids[edge["from"]]
-    to_id = node_ids[edge["to"]]
 
     cur.execute("""
        insert into graph_edges (from_id, to_id, relation, metadata)
        values (%s,%s,%s,%s)
     """, (
-         from_id, to_id, edge["relation"], json.dumps(edge)
+         edge["from_id"], edge["to_id"], edge["relation"], json.dumps(edge)
     ))
     conn.commit()
     cur.close()
