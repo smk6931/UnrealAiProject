@@ -16,7 +16,7 @@
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
 #include "Interfaces/IHttpResponse.h"
-#include "Project/ApiObject/Npc/ApiItemObject.h"
+#include "Project/ApiObject/ApiItemObject.h"
 
 class IImageWrapper;
 class FHttpModule;

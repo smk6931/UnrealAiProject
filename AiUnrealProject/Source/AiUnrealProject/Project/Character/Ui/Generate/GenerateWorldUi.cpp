@@ -49,9 +49,10 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 {
 	if (CommitMethod == ETextCommit::OnEnter)
 	{
+		float FontSize = 14;
 		UTextBlock* ResponseWorld = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
-		ResponseWorld->SetFont(FCoreStyle::GetDefaultFontStyle("Regular", 16));
-		Api->OnWorldInfoResponse.BindLambda([this,ResponseWorld](FString String)
+		ResponseWorld->SetFont(FCoreStyle::GetDefaultFontStyle("Regular", FontSize));
+		Api->OnWorldInfoResponse.BindLambda([this,ResponseWorld,FontSize](FString String)
 		{
 			this->InputQuestion->SetVisibility(ESlateVisibility::Collapsed);
 			
@@ -64,21 +65,21 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 
 			UTextBlock* TitleT = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			TitleT->SetText(FText::FromString(TEXT("생성된 세계관 제목")));
-			TitleT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			TitleT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 			TitleT->SetColorAndOpacity(FSlateColor(FColor::Yellow));
 			
 			UTextBlock* Title = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			Title->SetText(FText::FromString(RowsWithEmbed.Response[0].title));
-			Title->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			Title->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 
 			UTextBlock* ContentT = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			ContentT->SetText(FText::FromString(TEXT("생성된 세계관 내용")));
-			ContentT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			ContentT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 			ContentT->SetColorAndOpacity(FSlateColor(FColor::Yellow));
 		    
 		    UTextBlock* Content = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 		    Content->SetText(FText::FromString(RowsWithEmbed.Response[0].content));
-		    Content->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+		    Content->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 		    Content->SetAutoWrapText(true);
 			
 			this->RightVerticalBox->AddChild(TitleT);
@@ -90,31 +91,31 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 		    {
 		    	UTextBlock* TitleEmbedT = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 				TitleEmbedT->SetText(FText::FromString(TEXT("유사도 세계관 제목")));
-				TitleEmbedT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+				TitleEmbedT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 				TitleEmbedT->SetColorAndOpacity(FSlateColor(FColor::Yellow));
 		    	
 		    	UTextBlock* TitleEmbed = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			    TitleEmbed->SetText(FText::FromString(RowsWithEmbed.Response_Embed[0].title));
-			    TitleEmbed->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			    TitleEmbed->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 
 		    	UTextBlock* EmbedValueT = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 				EmbedValueT->SetText(FText::FromString(TEXT("유사도 측정")));
-				EmbedValueT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+				EmbedValueT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 				EmbedValueT->SetColorAndOpacity(FSlateColor(FColor::Yellow));
     
 			    UTextBlock* EmbedValue = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			    EmbedValue->SetText(FText::AsNumber(RowsWithEmbed.Response_Embed[0].similarity));
-			    EmbedValue->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+			    EmbedValue->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 			    EmbedValue->SetAutoWrapText(true);
 
 		    	UTextBlock* EmbedReasonT = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 				EmbedReasonT->SetText(FText::FromString(TEXT("유사도 이유")));
-				EmbedReasonT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+				EmbedReasonT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 				EmbedReasonT->SetColorAndOpacity(FSlateColor(FColor::Yellow));
     
 				UTextBlock* EmbedReason = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 				EmbedReason->SetText(FText::FromString(RowsWithEmbed.Response_Embed[0].similar_reason));
-				EmbedReason->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
+				EmbedReason->SetFont(FCoreStyle::GetDefaultFontStyle("regular",FontSize));
 				EmbedReason->SetAutoWrapText(true);
 		    	EmbedReason->SetMargin(FMargin(0.f, 5.f, 0.f, 10.f));
 

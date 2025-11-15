@@ -25,6 +25,13 @@ struct FNpcChatResponse
 public:
 	UPROPERTY(EditAnywhere)
 	FString response = FString(TEXT(""));
+
+	UPROPERTY(EditAnywhere)
+	FString reply = "reply";
+	UPROPERTY(EditAnywhere)
+	FString title = "title";
+	UPROPERTY(EditAnywhere)
+	float similarity = 0.00f;
 };
 
 UCLASS()

@@ -92,6 +92,7 @@ void UMenuUi::OnCreateWorldClick()
 {
 	UGenerateWorldUi* Ui = BpGenerateWorldUi;
 	Ui->SetVisibility(Ui->GetVisibility() == ESlateVisibility::Visible? ESlateVisibility::Collapsed: ESlateVisibility::Visible);
+	Board->SetVisibility(ESlateVisibility::Collapsed);
 }
 
 

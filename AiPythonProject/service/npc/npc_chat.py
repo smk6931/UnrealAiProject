@@ -97,4 +97,8 @@ def npc_chat_response(player_question):
     npc_reply = response.choices[0].message.content.strip()
     print("💬NPC 답변은??:",  npc_reply)
 
-    return npc_reply
+    return {
+             "reply" : npc_reply,
+             "title" : similar_stories[0]["title"],
+             "similarity" : similar_stories[0]["similarity"]
+           }

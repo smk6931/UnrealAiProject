@@ -11,7 +11,6 @@
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
-#include "Project/ApiObject/Npc/ApiItemObject.h"
 #include "Project/Character/Ui/MenuUi.h"
 #include "Project/Util/UiUtil.h"
 

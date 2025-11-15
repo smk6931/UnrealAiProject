@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Project/ApiObject/Npc/ApiWorldObject.h"
+#include "Project/ApiObject/ApiWorldObject.h"
 #include "WorldInfoUi.generated.h"
 
 class UButton;

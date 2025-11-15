@@ -9,5 +9,7 @@ class PlayerQuestion(BaseModel):
 
 @router.post("/npc/chat")
 def chat_with_npc(data: PlayerQuestion):
+  
   response = npc_chat_response(data.question)
-  return {"response": response}
+  return response
+  # return {"response": response}

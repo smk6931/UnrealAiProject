@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Components/EditableTextBox.h"
 #include "Components/MultiLineEditableTextBox.h"
-#include "Project/ApiObject/Npc/ApiWorldObject.h"
+#include "Project/ApiObject/ApiWorldObject.h"
 #include "GenerateWorldUi.generated.h"
 
 /**

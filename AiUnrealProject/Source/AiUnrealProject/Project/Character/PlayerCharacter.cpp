@@ -4,7 +4,7 @@
 #include "PlayerCharacter.h"
 
 #include "LandscapeEditTypes.h"
-#include "Project/ApiObject/Npc/ApiItemObject.h"
+#include "Project/ApiObject/ApiItemObject.h"
 #include "Project/Npc/NpcCharacter.h"
 #include "Ui/MenuUi.h"
 

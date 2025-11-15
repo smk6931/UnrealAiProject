@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "MonsterUi.h"
 #include "GameFramework/Character.h"
-#include "Project/ApiObject/Npc/ApiMonsterObject.h"
+#include "Project/ApiObject/ApiMonsterObject.h"
 #include "Monster.generated.h"
 
 UCLASS()

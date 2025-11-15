@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Project/ApiObject/Npc/ApiMonsterObject.h"
+#include "Project/ApiObject/ApiMonsterObject.h"
 #include "GenerateMonsterUi.generated.h"
 
 class UApiMonsterObject;

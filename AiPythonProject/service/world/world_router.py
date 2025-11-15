@@ -15,12 +15,6 @@ def get_world_all():
   response = select_worlds_all()
   return {"response" : response}
 
-@router.post("/world/generate")
-def generate_world_api(data: dict = Body(...)):
-  question = data["question"]
-  response = generate_world_pipeline(question)
-  return{"response" : response}
-
 @router.post("/world/generate/bylaststroy")
 def generate_next_world(data: dict = Body(...)):
   question = data["question"]
@@ -30,3 +24,10 @@ def generate_next_world(data: dict = Body(...)):
 
   return{ "response_embed" : response[0],
           "response" : response[1]}
+
+
+@router.post("/world/generate")
+def generate_world_api(data: dict = Body(...)):
+  question = data["question"]
+  response = generate_world_pipeline(question)
+  return{"response" : response}

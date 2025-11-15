@@ -27,12 +27,6 @@ def generate_monster_img(data: MonsterIds):
   url = generate_monster_image(data.monster_ids)
   return {"response": "이미지 생성 완료", "ids": data.monster_ids}, {"url", url}
 
-# @router.post("/monster/generate")
-# def get_generate_monster_fullinfo():
-#   response = get_random_worlds()
-#   return {"response": response}
-
-
 @router.post("/monster/generate")
 def get_generate_monster_world(data: dict = Body(...)):
   if "response" in data:

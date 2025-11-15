@@ -12,10 +12,12 @@
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
-#include "Project/ApiObject/Npc/ApiMonsterObject.h"
-#include "Project/ApiObject/Npc/ApiWorldObject.h"
+#include "Project/ApiObject/ApiWorldObject.h"
+
 #include "Project/Character/Ui/MenuUi.h"
 #include "Project/Util/UiUtil.h"
+
+class UApiWorldObject;
 
 void UGenerateMonsterUi::NativeConstruct()
 {
@@ -103,9 +105,7 @@ void UGenerateMonsterUi::OnCreateClick()
 		else{UE_LOG(LogTemp, Display, TEXT("OnMonsterInfoResponse Rows 안에 파싱 실패"));}
 	});
 	if (JsonString.IsEmpty())
-	{
-		UE_LOG(LogTemp, Display, TEXT("GenerateMonsterUi JsonString 빈배열 %s"), *JsonString); return;
-	}
+	{ UE_LOG(LogTemp, Display, TEXT("GenerateMonsterUi JsonString 빈배열 %s"), *JsonString); return; }
 	Api->GenerateMonster(JsonString);
 	// Api->CreateMonsterAi();
 }

@@ -12,6 +12,7 @@
 #include "Components/SizeBox.h"
 #include "Components/TextBlock.h"
 #include "Components/VerticalBox.h"
+#include "Project/ApiObject/ApiMonsterObject.h"
 #include "Project/Util/UiUtil.h"
 
 class UTextBlock;

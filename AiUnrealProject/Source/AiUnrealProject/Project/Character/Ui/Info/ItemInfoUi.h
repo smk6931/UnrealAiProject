@@ -4,17 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Project/ApiObject/Npc/ApiItemObject.h"
+#include "Project/ApiObject/ApiItemObject.h"
 #include "ItemInfoUi.generated.h"
 
 /**
  * 
  */
 
-
 class UButton;
-struct FItemRows;
-struct FItemRow;
 
 UCLASS()
 class AIUNREALPROJECT_API UItemInfoUi : public UUserWidget

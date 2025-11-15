@@ -9,8 +9,6 @@
 #include "Components/TextBlock.h"
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
-#include "Project/ApiObject/Npc/ApiItemObject.h"
-#include "Project/ApiObject/Npc/ApiNpcObject.h"
 #include "Serialization/ShaderKeyGenerator.h"
 
 
