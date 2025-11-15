@@ -108,7 +108,7 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 			    EmbedValue->SetAutoWrapText(true);
 
 		    	UTextBlock* EmbedReasonT = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
-				EmbedReasonT->SetText(FText::FromString(TEXT("유사도 측정")));
+				EmbedReasonT->SetText(FText::FromString(TEXT("유사도 이유")));
 				EmbedReasonT->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
 				EmbedReasonT->SetColorAndOpacity(FSlateColor(FColor::Yellow));
     
@@ -116,6 +116,7 @@ void UGenerateWorldUi::OnInputQuestion(const FText& Text, ETextCommit::Type Comm
 				EmbedReason->SetText(FText::FromString(RowsWithEmbed.Response_Embed[0].similar_reason));
 				EmbedReason->SetFont(FCoreStyle::GetDefaultFontStyle("regular",16));
 				EmbedReason->SetAutoWrapText(true);
+		    	EmbedReason->SetMargin(FMargin(0.f, 5.f, 0.f, 10.f));
 
 				this->LeftVerticalBox->AddChild(TitleEmbedT);
 			    this->LeftVerticalBox->AddChild(TitleEmbed);

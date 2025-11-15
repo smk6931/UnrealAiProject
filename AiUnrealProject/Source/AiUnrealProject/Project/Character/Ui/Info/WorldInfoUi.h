@@ -35,11 +35,11 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	class UScrollBox* VScroll;
 	
-	UPROPERTY(meta = (BindWidget))
-	class UTextBlock* WorldTitle;
-	
-	UPROPERTY(meta = (BindWidget))
-	class UButton* Button_Detail;
+	// UPROPERTY(meta = (BindWidget))
+	// class UTextBlock* WorldTitle;
+	//
+	// UPROPERTY(meta = (BindWidget))
+	// class UButton* Button_Detail;
 
 	UPROPERTY(meta = (BindWidget))
 	class UButton* Button_GenerateMonster;
@@ -60,6 +60,9 @@ public:
 	UFUNCTION()
 	void OnGenerateMonsterClick();
 
+	FWorldRow WorldPrev;
+	FWorldRow WorldNext;
+	
 	UPROPERTY(EditAnywhere)
 	TMap<UButton*, FWorldRow> ButtonWorldMap;
 };

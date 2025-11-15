@@ -50,18 +50,40 @@ def npc_chat_response(player_question):
             f"[{story['title']}]\n"
             f"{story['content']}\n"
             f"continent: {meta.get('continent', 'unknown')}, "
-            # f"difficulty: {meta.get('difficulty', 'unknown')}, "
-            # f"keywords: {meta.get('keywords', [])}\n"
         )
-    prompt = (
-        f"너는 RPG 게임의 NPC다. 플레이어의 질문에 대해 짧게 대답해라.\n"
-        f"답변은 반드시 5줄 이내로 하고, 감정은 자연스럽고 과하지 않게.\n"
-        f"세계관 요약은 말하지 말고, 직접 대화하듯 말해라.\n\n"
-        f"=== 세계관 정보 ===\n{context_text}\n"
-        f"=== 플레이어 질문 ===\n{player_question}\n\n"
-        f"=== NPC의 답변 ==="
-    )
+    prompt = f"""
+        너는 RPG 게임 속 NPC다.
 
+        플레이어의 질문을 먼저 분석하여 아래 두 가지 중 하나로 분류하라.
+        1) 세계관에 대한 질문인지?
+        2) 세계관이 아닌, 플레이/전투/인물/진행 방향 등에 대한 질문인지?
+
+        분류 결과에 따라 답변 방식을 다르게 한다.
+
+        ---------------------------------------
+        [규칙 A — 세계관 질문일 때]
+        - 임베딩으로 찾은 세계관(context_text)의 내용을 기반으로 답한다.
+        - 필요한 만큼 친절하게 설명해도 된다.
+        - 그러나 “설명체”가 아니라 NPC가 알고 있는 이야기처럼 대사 형태로 말한다.
+        - 최대 5줄.
+
+        [규칙 B — 세계관 질문이 아닐 때]
+        - 세계관을 직접 설명하지 않는다.
+        - 대신 세계관의 분위기·문화·사건·정서를 은유적으로 녹여서,
+        NPC 시점으로 자연스럽게 답한다.
+        - “이 세계는 ~이다” 같은 설명체는 금지.
+        - 최대 5줄.
+
+        ---------------------------------------
+        [참고용 세계관 정보(직접 언급 금지)]
+        {context_text}
+
+        [플레이어 질문]
+        {player_question}
+
+        ---------------------------------------
+        NPC의 대답:
+        """
     response = client.chat.completions.create(
         model="gpt-5-mini",
         messages=[
@@ -69,6 +91,9 @@ def npc_chat_response(player_question):
             {"role": "user", "content": prompt}
         ]
     )
+    # print("📘 스토리:", result["title"])
+    # print("   유사도(distance):", result["similarity"])
+
     npc_reply = response.choices[0].message.content.strip()
     print("💬NPC 답변은??:",  npc_reply)
 

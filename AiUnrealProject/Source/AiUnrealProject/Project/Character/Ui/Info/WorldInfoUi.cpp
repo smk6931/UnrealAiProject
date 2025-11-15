@@ -34,8 +34,6 @@ void UWorldInfoUi::NativeConstruct()
 void UWorldInfoUi::LoadWorlds()
 {
 	VScroll->ClearChildren();
-	// ButtonWorldMap.Empty();
-	
 	Api->OnWorldInfoResponse.BindWeakLambda(this,[this](FString String)
 	{
 		FJsonObjectConverter::JsonObjectStringToUStruct(String, &WorldRows);
@@ -43,7 +41,7 @@ void UWorldInfoUi::LoadWorlds()
 		{
 			UTextBlock* Title = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			Title->SetText(FText::FromString(Row.title));
-			Title->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 20)));
+			Title->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 16)));
 
 			UButton* Button = WidgetTree->ConstructWidget<UButton>(UButton::StaticClass());
 			Button->AddChild(Title);
@@ -57,8 +55,6 @@ void UWorldInfoUi::LoadWorlds()
 			UScrollBoxSlot* Slot = Cast<UScrollBoxSlot>(VScroll->AddChild(Button));
             Slot->SetPadding(FMargin(5.f));
 		}
-		WorldTitle->SetVisibility(ESlateVisibility::Collapsed);
-	    Button_Detail->SetVisibility(ESlateVisibility::Collapsed);
 	});
 	Api->GetWorldsAll();
 }
@@ -84,13 +80,13 @@ void UWorldInfoUi::OnDetailClick()
 			UTextBlock* Title = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			Title->SetColorAndOpacity(FColor::Yellow);
 			Title->SetText(FText::FromString(FString::Printf(TEXT("%s"),*Map.Value.title)));
-			Title->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 24)));
+			Title->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 16)));
 			
 			FWorldRow& Row = Map.Value;
 			UTextBlock* Desc = WidgetTree->ConstructWidget<UTextBlock>(UTextBlock::StaticClass());
 			Desc->SetText(FText::FromString(Row.content));
 			Desc->SetAutoWrapText(true);
-			Desc->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 20)));
+			Desc->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFontStyle("Regular", 16)));
 
 			UVerticalBoxSlot* Vslot = Cast<UVerticalBoxSlot>( DetailPanel->AddChild(Title));
 			Vslot->SetPadding(5.0f);

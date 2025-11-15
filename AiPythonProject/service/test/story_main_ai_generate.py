@@ -123,7 +123,7 @@ def generate_next_worlds(question, quest_mood="중급"):
 
     📜 출력은 아래 JSON 형식으로만:
     {{
-    "title": "새 시즌 세계관 제목",
+    "title": "새 시즌 세계관 제목 (13자 이하) ",
     "content": "이전 세계의 여운만 남고 완전히 새 문명에서 펼쳐지는 RPG 세계관 설명 (약 500자)",
     "metadata": {{
         "continent": "새로운 대륙 또는 차원 이름",
