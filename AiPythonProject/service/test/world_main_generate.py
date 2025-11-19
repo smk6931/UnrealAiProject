@@ -6,7 +6,7 @@ sys.path.append(os.path.abspath(
 
 import psycopg2.extras
 from openai import OpenAI
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 import json
 
 client = OpenAI()
@@ -61,7 +61,7 @@ def generate_worlds(continent, quest_mood="초보"):
     """, (title, content, json.dumps(metadata), embedding))
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     print(f"✅ [{continent}] 세계관 생성 완료: {title}")
 

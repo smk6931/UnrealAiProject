@@ -1,4 +1,4 @@
-from db_config import get_connection, get_cursor
+from db_config import get_connection, get_cursor, put_connection
 import sys
 import os
 
@@ -25,7 +25,7 @@ def add_monster_columns():
     conn.commit()
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
 def select_monsters_all():
     conn, cur = get_cursor()
@@ -46,7 +46,7 @@ def select_monsters_all():
     rows = cur.fetchall()
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return [dict(row) for row in rows]
 
@@ -62,7 +62,7 @@ def select_items(item_ids: list[int]):
 
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return [dict(row) for row in rows]
 
@@ -84,6 +84,6 @@ def select_monsters(monster_ids: list[int]):
 
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return[dict(row) for row in rows]

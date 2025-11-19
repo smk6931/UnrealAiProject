@@ -1,6 +1,6 @@
 import base64
 import psycopg2.extras
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 import sys
 import os
 
@@ -25,7 +25,7 @@ def create_items_table():
     """)
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
 def select_items_all():
     conn, cur = get_cursor()
@@ -39,7 +39,7 @@ def select_items_all():
     rows = cur.fetchall()
 
     cur.close()
-    conn.close()
+    put_connection(conn)
     return [dict(row) for row in rows]
 
 def select_items(item_ids: list[int]):
@@ -54,6 +54,6 @@ def select_items(item_ids: list[int]):
 
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return [dict(row) for row in rows]

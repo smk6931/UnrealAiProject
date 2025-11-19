@@ -1,5 +1,5 @@
 import json
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 from openai import OpenAI
 import psycopg2.extras
 import sys
@@ -87,4 +87,4 @@ def generate_worlds(quest_mood="초보"):
             """, (title, content, json.dumps(metadata), embedding))
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)

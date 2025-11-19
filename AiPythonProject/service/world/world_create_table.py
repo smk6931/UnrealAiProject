@@ -1,4 +1,4 @@
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 import sys
 import os
 sys.path.append(os.path.abspath(
@@ -11,7 +11,7 @@ def clear_worlds_table():
     conn.commit()
     print(" worlds 테이블의 모든 데이터가 삭제되었습니다.")
     cur.close()
-    conn.close()
+    put_connection(conn)
 
 def create_worlds_table():
     conn, cur = get_cursor()
@@ -31,5 +31,5 @@ def create_worlds_table():
     conn.commit()
     print("world_main 테이블 생성 완료")
     cur.close()
-    conn.close()
+    put_connection(conn)
 

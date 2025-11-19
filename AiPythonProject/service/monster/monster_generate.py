@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')
 import json
 import psycopg2.extras
 from openai import OpenAI
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 
 client = OpenAI()
 
@@ -93,7 +93,7 @@ def insert_monster(monster, bimage: bool =False):
 
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
     print(f"✅ 몬스터 '{monster['name']}' 생성 및 저장 완료! (world_id={monster['world_id']})")
 
     return [monster]

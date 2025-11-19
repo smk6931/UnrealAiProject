@@ -4,7 +4,7 @@ import os
 from openai import OpenAI
 import psycopg2.extras
 
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 
 
 client = OpenAI()
@@ -83,7 +83,7 @@ def generate_monster_image(monster_ids):
     """, (monster_ids,))
 
     cur.close()
-    conn.close()
+    put_connection(conn)
     print("✅ 모든 몬스터 이미지 저장 완료!")
 
     # result_rows = cur.fetchall()

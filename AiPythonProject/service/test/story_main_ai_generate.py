@@ -1,4 +1,4 @@
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 from openai import OpenAI
 import psycopg2.extras
 import json
@@ -50,7 +50,7 @@ def summarize_previous_world(question: str):
     """, (embedding,))
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     # rows가 비어 있으면 빈 리스트 반환
     if not rows:
@@ -189,7 +189,7 @@ def generate_next_worlds(question, quest_mood="중급"):
     ))
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     print(f"새 시즌 세계관 생성 완료: {world['title']}")
 

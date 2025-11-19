@@ -2,8 +2,6 @@ import json
 from openai import OpenAI
 client = OpenAI()
 
-
-
 # RangChain 초기 실패작
 
 def polish_world(user_prompt: str):

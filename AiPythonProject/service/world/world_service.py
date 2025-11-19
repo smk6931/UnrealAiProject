@@ -2,7 +2,7 @@ import json
 from unittest import result
 
 from openai import embeddings
-from db_config import get_connection, get_cursor
+from db_config import get_connection, get_cursor, put_connection
 import sys
 import os
 
@@ -27,7 +27,7 @@ def get_random_worlds():
     """)
     world = cur.fetchone()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     print(f"선택된 월드{world['title']}")
     return [dict(world)]
@@ -42,7 +42,7 @@ def select_worlds_all():
     """)
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     result = []
     for row in   rows:
@@ -64,7 +64,7 @@ def search_similar_worlds(embedding):
     """, (embedding,))
     rows = cur.fetchall()
     cur.close()
-    conn.close()
+    put_connection(conn)
     
     return rows
 
@@ -80,7 +80,7 @@ def insert_world(title, content, metadata, embedding):
     new_id = cur.fetchone()["id"]
     conn.commit()
     cur.close()
-    conn.close()
+    put_connection(conn)
     return new_id
 
 def generate_world_pipeline(prompt: str):

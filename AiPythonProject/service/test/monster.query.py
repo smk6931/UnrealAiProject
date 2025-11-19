@@ -1,4 +1,4 @@
-from db_config import get_connection, get_cursor
+from db_config import get_connection, get_cursor, put_connection
 
 
 def insert_monsters():
@@ -19,10 +19,10 @@ def insert_monsters():
         conn.commit()
         print("몬스터 기본 정보 + 설명 + 서식지 삽입 완료")
     except Exception as e:
-        pritn("몬스터 데이터 삽입 실패" + e)
+        print("몬스터 데이터 삽입 실패" + e)
     finally:
         cur.close()
-        conn.close()
+        put_connection(conn)
 
 if __name__ == "__main__":
     insert_monsters()

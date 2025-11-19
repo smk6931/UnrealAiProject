@@ -2,7 +2,7 @@
 from openai import OpenAI
 import psycopg2
 import psycopg2.extras
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 
 client = OpenAI()
 
@@ -15,7 +15,6 @@ def generate_embedding(text):
 
 def update_monster_embeddings():
     conn, cur = get_cursor()
-    cur.close()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
     if conn is None:
         return
@@ -35,8 +34,10 @@ def update_monster_embeddings():
         print(f"{name}임베딩 완료")
 
     conn.commit()
+
     cur.close()
-    conn.close()
+    put_connection(conn)
+
     print("모든 몬스터 임베딩 저장 완료")
 
 if __name__ == "__main__":

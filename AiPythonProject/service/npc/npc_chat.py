@@ -3,7 +3,7 @@ import sys
 sys.path.append(os.path.abspath(
 os.path.join(os.path.dirname(__file__), '../../')))
 
-from db_config import get_cursor
+from db_config import get_cursor, put_connection
 from openai import OpenAI
 import psycopg2
 import psycopg2.extras
@@ -34,7 +34,7 @@ def get_similar_world_stories(question, top_n=1):
         print("   요약:", result["content"][:150], "...\n")
 
     cur.close()
-    conn.close()
+    put_connection(conn)
 
     return results
 
