@@ -26,5 +26,5 @@ class AIUNREALPROJECT_API UCommonObject : public UObject
 public:
 	
 	UPROPERTY(BlueprintReadWrite)
-	FString Url = "http://127.0.0.1:8080/";
+	FString Url = "http://127.0.0.1:8080";
 };

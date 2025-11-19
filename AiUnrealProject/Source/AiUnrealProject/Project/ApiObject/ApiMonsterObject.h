@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "CommonObject.h"
 #include "ApiMonsterObject.generated.h"
+
 
 DECLARE_DELEGATE_OneParam(FOnMonsterInfoResponse, FString String)
 DECLARE_DELEGATE_OneParam(FOnMonsterTextureResponse, UTexture2D* Texture)
@@ -61,7 +63,7 @@ public:
 };
 
 UCLASS()
-class AIUNREALPROJECT_API UApiMonsterObject : public UObject
+class AIUNREALPROJECT_API UApiMonsterObject : public UCommonObject
 {
 	GENERATED_BODY()
 public:

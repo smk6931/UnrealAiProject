@@ -13,12 +13,13 @@
 void UApiItemObject::ItemInfoResponse()
 {
 	UE_LOG(LogTemp, Warning, TEXT("ItemInfoResponse"));
-	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/item"));
-	HttpRequest->SetVerb(TEXT("GET"));
-	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
+	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
+	Request->SetURL(FString::Printf(TEXT("%s/item"), *Url));
+	// Request->SetURL(TEXT("http://127.0.0.1:8000/item"));
+	Request->SetVerb(TEXT("GET"));
+	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
-	HttpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
+	Request->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
 	{
 		FString Response;
 		if (bSuccess && Res.IsValid() && Res->GetResponseCode() == 200)
@@ -31,7 +32,7 @@ void UApiItemObject::ItemInfoResponse()
 			OnItemInfoResponse.ExecuteIfBound(Res->GetContentAsString());
 		});
 	});
-	HttpRequest->ProcessRequest();
+	Request->ProcessRequest();
 }
 
 void UApiItemObject::LoadImageFromUrl(const FString& url)
@@ -82,7 +83,9 @@ void UApiItemObject::LoadImageFromUrl(const FString& url)
 
 void UApiItemObject::GenerateItemsForMonsterIds(int id, int item_count, bool bimage)
 {
-	FString url = "http://127.0.0.1:8000/item/generate/monster_ids";
+	// FString url = "http://127.0.0.1:8000/item/generate/monster_ids";
+	FString url = FString::Printf(TEXT("%s/item/generate/monster_ids"), *Url);
+	
 	FString String;
 	FMonsterGenerateItemRequest Request;
 	Request.monster_id = id;
@@ -124,7 +127,9 @@ void UApiItemObject::GenerateItemImg(int32 id)
 	FJsonObjectConverter::UStructToJsonObjectString(ItemIds, JsonString);
 	UE_LOG(LogTemp, Display, TEXT("GenerateItemImg 아이템 생성 요청 Json파싱은? [%s]"),*JsonString);
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL(FString("http://127.0.0.1:8000/item/image/generate"));
+
+	Request->SetURL(FString::Printf(TEXT("%s/item/image/generate"), *Url));
+	// Request->SetURL(FString("http://127.0.0.1:8000/item/image/generate"));
 	Request->SetVerb(TEXT("POST"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Request->SetContentAsString(JsonString);
@@ -141,7 +146,7 @@ void UApiItemObject::GetItemImageTimerCheck(int32 id)
 		ItemIds.item_ids.Add(id);
 		FJsonObjectConverter::UStructToJsonObjectString(ItemIds, JsonString);
 		FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-		Request->SetURL(TEXT("http://127.0.0.1:8000/item/get/item_ids"));
+		Request->SetURL(FString::Printf(TEXT("%s/item/get/item_ids"), *Url));
 		Request->SetVerb(TEXT("POST"));
 		Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 		Request->SetContentAsString(JsonString);
@@ -154,7 +159,8 @@ void UApiItemObject::GetItemImageTimerCheck(int32 id)
 				if (Rows.response[0].image_url != FItemRow().image_url)
 				{
 					UE_LOG(LogTemp, Warning, TEXT("GenerateItemImg Image Url비교 %s | %s"),*Rows.response[0].image_url, *FItemRow().image_url );
-					LoadImageFromUrl( FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Rows.response[0].image_url.Replace(TEXT("\\"), TEXT("/"))));
+					LoadImageFromUrl(FString::Printf(TEXT("%s/%s"),*Url, *Rows.response[0].image_url.Replace(TEXT("\\"), TEXT("/"))));
+
 					GetWorld()->GetTimerManager().ClearTimer(ImageGenerateTimer);
 					this->RemoveFromRoot();
 				}

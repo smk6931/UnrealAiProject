@@ -13,7 +13,8 @@ void UApiNpcObject::SendNpcChat(const FString& Question)
 {
 	UE_LOG(LogTemp, Display, TEXT("SendNpcChat"));
 	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/npc/chat"));
+	HttpRequest->SetURL(FString::Printf(TEXT("%s/npc/chat"), *Url));
+	// HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/npc/chat"));
 	HttpRequest->SetVerb(TEXT("POST"));
 	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 

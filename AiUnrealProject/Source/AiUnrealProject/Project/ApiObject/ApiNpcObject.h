@@ -3,6 +3,8 @@
 DECLARE_DELEGATE_OneParam(FOnNpcChatResponse, FString String)
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "CommonObject.h"
+
 #include "ApiNpcObject.generated.h"
 
 /**
@@ -35,7 +37,7 @@ public:
 };
 
 UCLASS()
-class AIUNREALPROJECT_API UApiNpcObject : public UObject
+class AIUNREALPROJECT_API UApiNpcObject : public UCommonObject
 {
 	GENERATED_BODY()
 public:

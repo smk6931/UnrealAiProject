@@ -98,7 +98,7 @@ void UMonsterInfoUi::LoadMonsters()
 			ButtonMonsterMap.Add(ClickButton, Monster);
 
 			ClickButton->OnClicked.AddDynamic(this, &UMonsterInfoUi::OnMonsterClicked);
-			Api->LoadImageFromUrl(FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Str));
+			Api->LoadImageFromUrl(FString::Printf(TEXT("http://127.0.0.1:8080/%s"), *Str));
 		}
 	});
 	Api->GetMonsterAll();

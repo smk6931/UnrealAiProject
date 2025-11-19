@@ -15,7 +15,8 @@ void UApiMonsterObject::GetMonsterAll()
 {
 	UE_LOG(LogTemp, Warning, TEXT("GetMonsterAll"));
 	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/monster"));
+	HttpRequest->SetURL(FString::Printf(TEXT("%s/monster"),*Url));
+	// HttpRequest->SetURL(TEXT("http://127.0.0.1:8000/monster"));
 	HttpRequest->SetVerb(TEXT("GET"));
 	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	HttpRequest->OnProcessRequestComplete().BindLambda([this](FHttpRequestPtr Req, FHttpResponsePtr Res, bool bSuccess)
@@ -41,7 +42,7 @@ void UApiMonsterObject::GetItemMonsterIimerCheck(int32 id)
 		
 		if (Rows.response[0].image_url != FItemRow().image_url)
 		{
-			FString Str = FString::Printf(TEXT("http://127.0.0.1:8000/%s"),*MonsterRows.response[0].image_url.Replace(TEXT("\\"), TEXT("/")));
+			FString Str = FString::Printf(TEXT("%s/%s"),*Url,*MonsterRows.response[0].image_url.Replace(TEXT("\\"), TEXT("/")));
 			LoadImageFromUrl(Str);
 			GetWorld()->GetTimerManager().ClearTimer(ImageGenerateTimer);
 		}
@@ -62,7 +63,8 @@ void UApiMonsterObject::GetMonsters(int32 id)
 	FJsonObjectConverter::UStructToJsonObjectString(MonsterIds, JsonString);
 
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL("http://127.0.0.1:8000/monster/get/monster_ids");
+	Request->SetURL(FString::Printf(TEXT("%s/monster/get/monster_ids"), *Url));
+	// Request->SetURL("http://127.0.0.1:8000/monster/get/monster_ids");
 	Request->SetVerb(TEXT("POST"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Request->SetContentAsString(JsonString);
@@ -90,7 +92,8 @@ void UApiMonsterObject::GenerateMonsterImg(int32 id)
 	FJsonObjectConverter::UStructToJsonObjectString(MonsterIds, JsonString);
 
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL(TEXT("http://127.0.0.1:8000/monster/image/generate"));
+	Request->SetURL(FString::Printf(TEXT("%s/monster/image/generate"), *Url));
+	// Request->SetURL(TEXT("http://127.0.0.1:8000/monster/image/generate"));
 	Request->SetVerb(TEXT("POST"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Request->SetContentAsString(JsonString);
@@ -137,7 +140,8 @@ void UApiMonsterObject::CreateMonsterAi()
 	UE_LOG(LogTemp,Warning,TEXT("CreateMonsterAi"))
 	
 	FHttpRequestRef HttpRequest = FHttpModule::Get().CreateRequest();
-	HttpRequest->SetURL("http://127.0.0.1:8000/monster/generate");
+	HttpRequest->SetURL(FString::Printf(TEXT("%s/monster/generate"), *Url));
+	// HttpRequest->SetURL("http://127.0.0.1:8000/monster/generate");
 	HttpRequest->SetTimeout(120.0f); 
 	HttpRequest->SetVerb(TEXT("POST"));
 	HttpRequest->SetHeader(TEXT("Content-Type"), TEXT("application/json"));

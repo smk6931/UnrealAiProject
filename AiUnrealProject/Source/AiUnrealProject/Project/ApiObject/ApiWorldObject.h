@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "CommonObject.h"
 #include "ApiWorldObject.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnWorldInfoResponse, FString String)
@@ -55,7 +56,7 @@ public:
 };
 
 UCLASS()
-class AIUNREALPROJECT_API UApiWorldObject : public UObject
+class AIUNREALPROJECT_API UApiWorldObject : public UCommonObject
 {
 	GENERATED_BODY()
 public:

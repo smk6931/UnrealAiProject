@@ -6,8 +6,9 @@ DECLARE_DELEGATE_OneParam(FOnItemInfoResponse, FString String)
 DECLARE_DELEGATE_OneParam(FOnItemTextureResponse, UTexture2D* Texture)
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "ApiItemObject.generated.h"
 #include "CommonObject.h"
+
+#include "ApiItemObject.generated.h"
 
 /**
  * 

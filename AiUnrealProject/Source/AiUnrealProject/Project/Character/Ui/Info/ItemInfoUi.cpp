@@ -76,7 +76,7 @@ void UItemInfoUi::LoadItems()
             FHttpModule* Http = &FHttpModule::Get();
             TSharedRef<IHttpRequest, ESPMode::ThreadSafe> ImgRequest = Http->CreateRequest();
             FString Str = Item.image_url.Replace(TEXT("\\"), TEXT("/"));
-            ImgRequest->SetURL(FString::Printf(TEXT("http://127.0.0.1:8000/%s"), *Str));
+            ImgRequest->SetURL(FString::Printf(TEXT("http://127.0.0.1:8080/%s"), *Str));
             ImgRequest->SetVerb("GET");
 
             // 내부 BindLambda (중첩 콜백)

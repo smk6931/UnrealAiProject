@@ -13,7 +13,8 @@
 void UApiWorldObject::GetRandomWorld()
 {
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL(TEXT("http://127.0.0.1:8000/world/random"));
+	Request->SetURL(FString::Printf(TEXT("%s/world/random"), *Url));
+	// Request->SetURL(TEXT("http://127.0.0.1:8000/world/random"));
 	Request->SetVerb(TEXT("GET"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
@@ -37,7 +38,7 @@ void UApiWorldObject::GetRandomWorld()
 void UApiWorldObject::GetWorldsAll()
 {
 	FHttpRequestRef Request = FHttpModule::Get().CreateRequest();
-	Request->SetURL(TEXT("http://127.0.0.1:8000/world"));
+	Request->SetURL(FString::Printf(TEXT("%s/world"), *Url));
 	Request->SetVerb(TEXT("GET"));
 	Request->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 
@@ -71,7 +72,8 @@ void UApiWorldObject::GenerateWorldPipeline(FString Prompt)
 	FJsonObjectConverter::UStructToJsonObjectString(Request, JsonString);
 
 	FHttpRequestRef Req = FHttpModule::Get().CreateRequest();
-	Req->SetURL(TEXT("http://127.0.0.1:8000/world/generate"));
+	// Req->SetURL(TEXT("http://127.0.0.1:8000/world/generate"));
+	Req->SetURL(FString::Printf(TEXT("%s/world/generate"), *Url));
 	Req->SetVerb(TEXT("POST"));
 	Req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Req->SetContentAsString(JsonString);
@@ -104,7 +106,8 @@ void UApiWorldObject::GenerateNextWorld(FString Prompt)
 	FJsonObjectConverter::UStructToJsonObjectString(Request, JsonString);
 
 	FHttpRequestRef Req = FHttpModule::Get().CreateRequest();
-	Req->SetURL(TEXT("http://127.0.0.1:8000/world/generate/bylaststroy"));
+	Req->SetURL(FString::Printf(TEXT("%s/world/generate/bylaststroy"), *Url));
+	// Req->SetURL(TEXT("http://127.0.0.1:8000/world/generate/bylaststroy"));
 	Req->SetVerb(TEXT("POST"));
 	Req->SetHeader(TEXT("Content-Type"), TEXT("application/json"));
 	Req->SetContentAsString(JsonString);
