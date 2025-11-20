@@ -9,6 +9,7 @@ from db_config import get_cursor, put_connection
 
 client = OpenAI()
 
+
 def generate_monster_image(monster_ids):
     conn, cur = get_cursor()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -40,41 +41,41 @@ def generate_monster_image(monster_ids):
     사실적 질감, 섬세한 조명, 고품질, 판타지 스타일.        
     """
         try:
-          translate_prompt = f"다음 몬스터 이름을 영어로 자연스럽게 번역하고, 공백 대신 '_'로 바꿔줘:\n\n{row['name']}"
-          name_response = client.chat.completions.create(
-            model="gpt-5-nano",
-            messages=[
-                {"role": "system", "content": "너는 영어 번역기야."},
-                {"role": "user", "content": translate_prompt}
-            ]
-          )
-          translate_name = name_response.choices[0].message.content.strip()
+            translate_prompt = f"다음 몬스터 이름을 영어로 자연스럽게 번역하고, 공백 대신 '_'로 바꿔줘:\n\n{row['name']}"
+            name_response = client.chat.completions.create(
+                model="gpt-5-nano",
+                messages=[
+                    {"role": "system", "content": "너는 영어 번역기야."},
+                    {"role": "user", "content": translate_prompt}
+                ]
+            )
+            translate_name = name_response.choices[0].message.content.strip()
 
-          result = client.images.generate(
-            model="gpt-image-1-mini",
-            prompt=prompt,
-            size="1024x1024",
-            n=1
-          )
+            result = client.images.generate(
+                model="gpt-image-1-mini",
+                prompt=prompt,
+                size="1024x1024",
+                n=1
+            )
 
-          image_data = result.data[0].b64_json
-          if not image_data:
-            raise ValueError("이미지 데이터가 비어 있음")
+            image_data = result.data[0].b64_json
+            if not image_data:
+                raise ValueError("이미지 데이터가 비어 있음")
 
-          image_bytes = base64.b64decode(image_data)
-          image_path = os.path.join("image/monster", f"{translate_name}.png")
+            image_bytes = base64.b64decode(image_data)
+            image_path = os.path.join("image/monster", f"{translate_name}.png")
 
-          with open(image_path, "wb") as f:
-            f.write(image_bytes)
-          print(f'[{row["id"]}] "{row["name"]}" 저장 완료 → {image_path}')
+            with open(image_path, "wb") as f:
+                f.write(image_bytes)
+            print(f'[{row["id"]}] "{row["name"]}" 저장 완료 → {image_path}')
 
-          cur.execute("""
+            cur.execute("""
             update monsters set image_url = %s where id = %s
           """, (image_path, row["id"]))
-          conn.commit()
+            conn.commit()
 
         except Exception as e:
-          print(f'[{row["id"]}] "{row["name"]}" 이미지 생성 실패 : {e}')
+            print(f'[{row["id"]}] "{row["name"]}" 이미지 생성 실패 : {e}')
 
     cur.execute("""
         SELECT id, name, level, hp, attack, habitat, description, image_url
@@ -88,4 +89,3 @@ def generate_monster_image(monster_ids):
 
     # result_rows = cur.fetchall()
     # return [dict (row) for row in result_rows]
-

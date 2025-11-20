@@ -19,6 +19,9 @@ struct FMonsterRow
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY(EditAnywhere)
+	float HpCur = 0.0f;
+	
 	UPROPERTY(BlueprintReadWrite)
 	FString Name = "name";
 	UPROPERTY(BlueprintReadWrite)

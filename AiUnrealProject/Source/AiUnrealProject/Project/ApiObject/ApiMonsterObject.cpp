@@ -104,7 +104,8 @@ void UApiMonsterObject::GenerateMonsterImg(int32 id)
 
 void UApiMonsterObject::LoadImageFromUrl(const FString& url)
 {
-	UE_LOG(LogTemp, Warning, TEXT("LoadImageFromUrl 몬스터 이미지 요청"));
+	FString Str =url.Replace(TEXT("\\"), TEXT("/"));
+	UE_LOG(LogTemp, Warning, TEXT("LoadImageFromUrl 몬스터 이미지 요청 %s"),*Str);
 	FHttpModule* Http = &FHttpModule::Get();
 	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
 	Request->SetURL(url);
